@@ -152,6 +152,7 @@ public class AccountInformation extends AppCompatActivity {
                         public void onDataChange(final DataSnapshot dataSnapshot) {
                             ArrayList<Item> ObjectList = new ArrayList<Item>();
                             ArrayList<String> ObjectTitles = new ArrayList<String>();
+                            ObjectTitles.add("Select an Item to Delete:");
                             for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                                 Item tempItem = dsp.getValue(Item.class);
                                 ObjectList.add(tempItem);
@@ -180,12 +181,19 @@ public class AccountInformation extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     String strName = adapter.getItem(which);
-                                    myRef.child(auth.getCurrentUser().getUid()).child("ItemsSent").child(strName).removeValue();
-                                    itemRef.child(strName).removeValue();
-                                    commentRef.child(strName).removeValue();
-                                    Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
-                                    Toast.makeText(AccountInformation.this, "Item Removed!", Toast.LENGTH_SHORT).show();
-                                    startActivity(refreshPage);
+                                    if(strName.equals("Select an Item to Delete:")){
+                                        Toast.makeText(AccountInformation.this, "That Is Not An Item", Toast.LENGTH_SHORT).show();
+                                        Intent home12 = new Intent(AccountInformation.this, AccountInformation.class);
+                                        startActivity(home12);
+                                    }
+                                    else {
+                                        myRef.child(auth.getCurrentUser().getUid()).child("ItemsSent").child(strName).removeValue();
+                                        itemRef.child(strName).removeValue();
+                                        commentRef.child(strName).removeValue();
+                                        Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
+                                        Toast.makeText(AccountInformation.this, "Item Removed!", Toast.LENGTH_SHORT).show();
+                                        startActivity(refreshPage);
+                                    }
                                 }
                             });
                             builderSingle.show();
