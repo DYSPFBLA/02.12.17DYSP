@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.netassistant.DyspFBLAApp.NavigationActivity"
+    tools:context="fbla.mobileapp.app.dysp.NavigationActivity"
     tools:showIn="@layout/app_bar_navigation"
     android:background="@color/colorRestOpp">
 
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         app:fabSize="normal"
-        app:srcCompat="@drawable/seeitems"
+        app:srcCompat="@drawable/fabgallery"
         android:id="@+id/seeItems"
         android:layout_alignTop="@+id/postItem"
         android:layout_alignParentStart="true" />
@@ -169,8 +169,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/WelcomeText"
         android:textAppearance="@android:style/TextAppearance.Material.Large"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="14dp"
+        android:text='""'
         android:layout_alignParentTop="true"
-        android:layout_alignEnd="@+id/setGoal" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

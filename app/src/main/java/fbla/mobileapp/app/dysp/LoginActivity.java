@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() != null) {
-            //startActivity(new Intent(this, NavigationActivity.class));
+            startActivity(new Intent(this, NavigationActivity.class));
             //finish();
             //auth.signOut();
             //Toast.makeText(LoginActivity.this, auth.getCurrentUser().getEmail().toString(), Toast.LENGTH_LONG).show();

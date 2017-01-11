@@ -118,7 +118,7 @@ public class NavigationActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 final ArrayList<String> SaveTitles = new ArrayList<String>();
-                SaveTitles.add("No Saved Items");
+                SaveTitles.add("Select a Saved Item:");
                 final ArrayList<Item> InterestedItems = new ArrayList<Item>();
                 final AlertDialog.Builder builderSingle = new AlertDialog.Builder(NavigationActivity.this);
                 builderSingle.setTitle("View Saved Items");
@@ -149,9 +149,16 @@ public class NavigationActivity extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String strName = adapter.getItem(which);
-                                Intent refreshPage = new Intent(NavigationActivity.this, ViewItem.class);
-                                refreshPage.putExtra("itemname", strName);
-                                startActivity(refreshPage);
+                                if(strName.equals("Select a Saved Item:")){
+                                    Toast.makeText(NavigationActivity.this, "That Is Not A Saved Item", Toast.LENGTH_SHORT).show();
+                                    Intent home12 = new Intent(NavigationActivity.this, NavigationActivity.class);
+                                    startActivity(home12);
+                                }
+                                else {
+                                    Intent refreshPage = new Intent(NavigationActivity.this, ViewItem.class);
+                                    refreshPage.putExtra("itemname", strName);
+                                    startActivity(refreshPage);
+                                }
                             }
                         });
                         builderSingle.show();
@@ -296,12 +303,18 @@ public class NavigationActivity extends AppCompatActivity
             //Toast.makeText(this, auth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
             myRef.child(auth.getCurrentUser().getUid()).child("DispayName").setValue(auth.getCurrentUser().getDisplayName());
             myRef.child(auth.getCurrentUser().getUid()).child("Email").setValue(auth.getCurrentUser().getEmail());
-            String displayName = auth.getCurrentUser().getDisplayName();
-            WelcomeText.setText(displayName);
-            WelcomeText.setTypeface(null, Typeface.BOLD);
-            //Welcome.setTypeface(null, Typeface.BOLD);
-          //  Username.setText(auth.getCurrentUser().getDisplayName());
-           // useremail.setText(auth.getCurrentUser().getEmail());
+              try {
+                  String displayName = auth.getCurrentUser().getDisplayName().substring(0, auth.getCurrentUser().getDisplayName().indexOf(" "));
+                  WelcomeText.setText("Welcome " + displayName + "!");
+                //WelcomeText.setText(auth.getCurrentUser().getDisplayName());
+                WelcomeText.setTypeface(null, Typeface.BOLD);
+                //Welcome.setTypeface(null, Typeface.BOLD);
+            }catch (Exception e){
+                WelcomeText.setText(auth.getCurrentUser().getDisplayName());
+                WelcomeText.setTypeface(null, Typeface.BOLD);
+            }
+             Username.setText(auth.getCurrentUser().getDisplayName());
+             useremail.setText(auth.getCurrentUser().getEmail());
 
     }
 

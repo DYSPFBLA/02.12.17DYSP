@@ -100,7 +100,7 @@ public class AccountInformation extends AppCompatActivity {
         });
         Button changeName = (Button)findViewById(R.id.changeName);
         final EditText input2 = new EditText(AccountInformation.this);
-        input2.setHint("Enter Name");
+        input2.setHint("Enter Full Name");
         changeName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

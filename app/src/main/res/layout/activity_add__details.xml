@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.netassistant.DyspFBLAApp.FBLA.example.netassistant.DyspFBLAApp.Add_Details"
+    tools:context="fbla.mobileapp.app.dysp.Add_Details"
     android:background="@color/colorRestOpp">
 
     <ScrollView

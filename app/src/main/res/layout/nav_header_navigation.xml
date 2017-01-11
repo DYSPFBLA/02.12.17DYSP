@@ -5,7 +5,7 @@
     android:layout_height="@dimen/nav_header_height"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/side_nav_bar"
-    tools:context="com.example.netassistant.DyspFBLAApp.NavigationActivity"
+    tools:context="fbla.mobileapp.app.dysp.NavigationActivity"
     android:gravity="bottom"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"

@@ -1,6 +1,7 @@
 package fbla.mobileapp.app.dysp;
 
 import android.graphics.Bitmap;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.Activity;
@@ -23,14 +24,16 @@ public class Add_Object extends AppCompatActivity {
     public static final String IMAGE_TYPE = "image/*";
     TextView select_image, take_image;
     ImageView image_diplay;
-    Button add_item, fromgallery, takeimage;
+    Button add_item;
+    TextView textView10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add__object);
-        fromgallery = (Button)findViewById(R.id.button2);
-        takeimage = (Button)findViewById(R.id.button);
+        FloatingActionButton takeimage = (FloatingActionButton)findViewById(R.id.imagefab);
+        FloatingActionButton fromgallery = (FloatingActionButton)findViewById(R.id.galleryfab);
+        textView10 = (TextView)findViewById(R.id.textView10);
         image_diplay = (ImageView)findViewById(R.id.image_display) ;
         fromgallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +61,7 @@ public class Add_Object extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        textView10.setVisibility(View.INVISIBLE);
         image_diplay = (ImageView)findViewById(R.id.image_display) ;
        final Bitmap user; final Bitmap user1;
         if (resultCode == RESULT_OK) {
@@ -103,7 +107,7 @@ public class Add_Object extends AppCompatActivity {
         } else {
             // report failure
             Toast.makeText(getApplicationContext(), R.string.msg_failed_to_get_intent_data, Toast.LENGTH_LONG).show();
-            Log.d(Add_Object.class.getSimpleName(), "Failed to get intent data, result code is " + resultCode);
+           //Log.d(Add_Object.class.getSimpleName(), "Failed to get intent data, result code is " + resultCode);
         }
     }
 
