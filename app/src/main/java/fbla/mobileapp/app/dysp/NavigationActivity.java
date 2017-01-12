@@ -63,13 +63,13 @@ public class NavigationActivity extends AppCompatActivity
         FloatingActionButton viewSaves = (FloatingActionButton)findViewById(R.id.viewSaves);
         final ProgressBar pb = (ProgressBar) findViewById(R.id.pb);
         final int progressStatus = 0;
-        final EditText input = new EditText(this);
-        input.setHint("Enter Location");
+        final AlertDialog.Builder builder1 = new AlertDialog.Builder(NavigationActivity.this);
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(NavigationActivity.this);
                 builder1.setTitle("Set Location");
+                final EditText input = new EditText(NavigationActivity.this);
+                input.setHint("Enter Location");
                 builder1.setView(input);
                 builder1.setPositiveButton("Set Location", new DialogInterface.OnClickListener() {
                     @Override
@@ -77,6 +77,7 @@ public class NavigationActivity extends AppCompatActivity
                         String location = input.getText().toString();
                         myRef.child(auth.getCurrentUser().getUid()).child("Location").setValue(location);
                         dialog.dismiss();
+                        builder1.setView(null);
                         Intent refresh = new Intent(NavigationActivity.this, NavigationActivity.class);
                         Toast.makeText(NavigationActivity.this, "Location Updated!", Toast.LENGTH_SHORT).show();
                         startActivity(refresh);
@@ -85,8 +86,16 @@ public class NavigationActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        builder1.setView(null);
                         Intent refresh = new Intent(NavigationActivity.this, NavigationActivity.class);
                         startActivity(refresh);
+                    }
+                });
+                builder1.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        dialog.dismiss();
+                        dialog.cancel();
                     }
                 });
                 builder1.show();

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,10 +23,11 @@ public class Add_Object extends AppCompatActivity {
     private static final int RESULT_LOAD_IMAGE = 101;
     private static final int CAMERA_REQUEST = 1888;
     public static final String IMAGE_TYPE = "image/*";
-    TextView select_image, take_image;
+    TextView select_image, take_image, textView7, textView8;
     ImageView image_diplay;
     Button add_item;
     TextView textView10;
+    RelativeLayout layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +35,17 @@ public class Add_Object extends AppCompatActivity {
         setContentView(R.layout.activity_add__object);
         FloatingActionButton takeimage = (FloatingActionButton)findViewById(R.id.imagefab);
         FloatingActionButton fromgallery = (FloatingActionButton)findViewById(R.id.galleryfab);
+        RelativeLayout layout = (RelativeLayout)findViewById(R.id.activity_add__object);
+        textView7 = (TextView)findViewById(R.id.textView7);
+        textView8 = (TextView)findViewById(R.id.textView8);
         textView10 = (TextView)findViewById(R.id.textView10);
         image_diplay = (ImageView)findViewById(R.id.image_display) ;
         fromgallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView10.setVisibility(View.INVISIBLE);
+                textView7.setVisibility(View.INVISIBLE);
+                textView8.setVisibility(View.INVISIBLE);
                 Intent i = new Intent();
                 i.setType(IMAGE_TYPE);
                 i.setAction(Intent.ACTION_GET_CONTENT);
@@ -48,6 +56,9 @@ public class Add_Object extends AppCompatActivity {
         takeimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textView7.setVisibility(View.INVISIBLE);
+                textView8.setVisibility(View.INVISIBLE);
+                textView10.setVisibility(View.INVISIBLE);
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
             }
@@ -61,7 +72,6 @@ public class Add_Object extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        textView10.setVisibility(View.INVISIBLE);
         image_diplay = (ImageView)findViewById(R.id.image_display) ;
        final Bitmap user; final Bitmap user1;
         if (resultCode == RESULT_OK) {
