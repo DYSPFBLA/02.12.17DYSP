@@ -34,7 +34,6 @@ public class CreditCard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_credit_card);
         ButterKnife.bind(this);
-        TextView warning = (TextView)findViewById(R.id.warning);
        // Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/lettergothic.ttf");
         Button submit = (Button)findViewById(R.id.Submit);
         submit.setOnClickListener(new View.OnClickListener() {

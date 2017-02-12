@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_list__item"
     android:layout_width="match_parent"
@@ -34,6 +35,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/list_view"
+        android:layout_below="@+id/searchItem"
         android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/search"
+        android:id="@+id/imageView3"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="13"
+        android:id="@+id/searchItem"
+        android:hint="Search For Item"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/imageView3"
+        android:layout_marginStart="16dp" />
 
 </RelativeLayout>

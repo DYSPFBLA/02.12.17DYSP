@@ -14,9 +14,10 @@
 
     <Button
         android:text="Add Item"
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/image_display"
+
         android:layout_centerHorizontal="true"
         android:layout_marginTop="11dp"
         android:id="@+id/add_item"

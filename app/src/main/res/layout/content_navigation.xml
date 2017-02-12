@@ -14,164 +14,276 @@
     tools:showIn="@layout/app_bar_navigation"
     android:background="@color/colorRestOpp">
 
-    <TextView
-        android:text="Items On Sale:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="59dp"
-        android:id="@+id/textView2"
-        android:layout_alignTop="@+id/WelcomeText"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="35dp"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/account"
-        android:id="@+id/myaccount"
-        android:layout_marginBottom="18dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/fabgallery"
-        android:id="@+id/seeItems"
-        android:layout_alignTop="@+id/postItem"
-        android:layout_alignParentStart="true" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/save"
-        android:id="@+id/viewSaves"
-        android:layout_alignTop="@+id/myaccount"
-        android:layout_toEndOf="@+id/postItem"
-        android:layout_marginStart="13dp" />
-
-
-    <TextView
-        android:text="Current Offers:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="19dp"
-        android:id="@+id/textView3"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium"
-        android:layout_below="@+id/textView2"
-        android:layout_alignStart="@+id/textView2" />
-
-    <TextView
-        android:text="0"
-        android:layout_width="wrap_content"
-        android:gravity="left"
-        android:layout_height="wrap_content"
-        android:id="@+id/current_offers"
-        android:textAppearance="@android:style/TextAppearance.Material.Title"
-        android:layout_alignBottom="@+id/textView3"
-        android:layout_alignStart="@+id/items_posted" />
-
-    <TextView
-        android:text="$"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/goal"
-        android:textAppearance="@android:style/TextAppearance.Material.Title"
-        android:layout_alignTop="@+id/setGoal"
-        android:layout_toEndOf="@+id/viewSaves" />
-
-    <TextView
-        android:text="Money Earned:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView4"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium"
-        android:layout_marginBottom="14dp"
-        android:layout_above="@+id/pb"
-        android:layout_alignStart="@+id/textView3" />
-
-    <Button
-        android:text="Set Goal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/setGoal"
-        android:layout_marginBottom="69dp"
-        android:layout_above="@+id/seeItems"
-        android:layout_alignStart="@+id/pb" />
-
-    <ProgressBar
-        android:id="@+id/pb"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
-        android:layout_marginBottom="25dp"
-        android:layout_above="@+id/goal"
-        android:layout_alignStart="@+id/textView4" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:gravity="left"
-        android:layout_height="wrap_content"
-        android:id="@+id/moneyEarned"
-        android:textAppearance="@android:style/TextAppearance.Material.Title"
-        android:layout_alignBottom="@+id/textView4"
-        android:layout_alignEnd="@+id/goal"
-        android:text="$" />
-
-    <TextView
-        android:text="Goal:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView9"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium"
-        android:layout_alignTop="@+id/goal"
-        android:layout_alignStart="@+id/viewSaves" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/location"
-        android:id="@+id/Location"
-        android:layout_below="@+id/setGoal"
-        android:layout_alignEnd="@+id/setGoal" />
-
-    <TextView
-        android:text="0"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/items_posted"
-        android:gravity="left"
-        android:textAppearance="@android:style/TextAppearance.Material.Title"
-        android:layout_above="@+id/textView3"
-        android:layout_toStartOf="@+id/myaccount" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/camera"
-        android:id="@+id/postItem"
-        android:layout_alignTop="@+id/viewSaves"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/WelcomeText"
-        android:textAppearance="@android:style/TextAppearance.Material.Large"
-        android:layout_marginTop="14dp"
-        android:text='""'
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentStart="true">
 
+        <TextView
+            android:text="Welcome, Ethan!"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:id="@+id/WelcomeText"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="39dp"
+            android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+            android:background="@drawable/customborder"
+        android:weightSum="1"
+            android:id="@+id/TotalMoneyEarnedLayout">
+
+            <ImageView
+                android:layout_width="38dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="5dp"
+                app:srcCompat="@drawable/pricetag"
+                android:id="@+id/imageView4" />
+
+            <TextView
+            android:text="Total Money Earned:"
+            android:layout_width="150dp"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:id="@+id/moneyearned"
+                android:layout_marginBottom="2dp"
+            android:layout_height="25dp"
+                android:layout_weight="0.48"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            <TextView
+                android:text="$250.00"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="right"
+                android:layout_marginLeft="55dp"
+                android:layout_marginBottom="2dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/moneyEarned"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="39dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="9dp"
+            android:weightSum="1"
+            android:background="@drawable/customborder"
+            android:id="@+id/ItemsForSaleLayout">
+
+            <ImageView
+                android:layout_width="38dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="5dp"
+                app:srcCompat="@drawable/items"
+                android:id="@+id/imageView6" />
+
+
+            <TextView
+                android:text="Items For Sale:"
+                android:layout_width="100dp"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:id="@+id/test1"
+                android:layout_height="25dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:layout_weight="0.98" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/yellowmark"
+                android:layout_marginTop="8dp"
+                android:id="@+id/imageView43348" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/rightarrow"
+                android:layout_marginTop="6dp"
+                android:id="@+id/imageView8" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="39dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="9dp"
+            android:weightSum="1"
+            android:background="@drawable/customborder"
+            android:id="@+id/OffersReceivedLayout">
+
+            <ImageView
+                android:layout_width="38dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="5dp"
+                app:srcCompat="@drawable/chatbubble2"
+                android:id="@+id/imageView46" />
+
+            <TextView
+                android:text="Offers Received:"
+                android:layout_width="100dp"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:id="@+id/test123"
+                android:layout_height="25dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:layout_weight="0.98" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/yellowmark"
+                android:layout_marginTop="8dp"
+                android:id="@+id/imageView4348" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/rightarrow"
+                android:layout_marginTop="6dp"
+                android:id="@+id/imageView448" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="39dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="9dp"
+            android:weightSum="1"
+            android:background="@drawable/customborder"
+            android:id="@+id/UploadNewItemLayout">
+
+            <ImageView
+                android:layout_width="38dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="5dp"
+                app:srcCompat="@drawable/cameraupload"
+                android:id="@+id/imageView243" />
+
+            <TextView
+                android:text="Upload New Item"
+                android:layout_width="100dp"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:id="@+id/tes31t"
+                android:layout_height="25dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/rightarrow"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/imageView48" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="39dp"
+            android:layout_marginTop="25dp"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <ImageView
+                android:layout_width="38dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="5dp"
+                app:srcCompat="@drawable/dollarsign"
+                android:id="@+id/imageView24" />
+
+            <TextView
+                android:text="Progress Towards Goal:       $300/400"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:id="@+id/progressgoal"
+                android:layout_height="25dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:layout_width="322dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:foregroundGravity="center"
+            style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+            android:id="@+id/pb" />
+
+        <Button
+            android:text="Change Goal"
+            android:layout_width="150dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginTop="30dp"
+            android:layout_height="37dp"
+            android:id="@+id/setGoal"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        android:weightSum="1">
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/fabgallery"
+            android:id="@+id/seeItems"/>
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:fabSize="normal"
+            android:layout_marginLeft="10dp"
+            app:srcCompat="@drawable/location"
+            android:id="@+id/Location"/>
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:fabSize="normal"
+            android:scaleType="center"
+            android:layout_marginLeft="10dp"
+            app:srcCompat="@drawable/plussize"
+            android:id="@+id/postItem"/>
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:fabSize="normal"
+            android:layout_marginLeft="10dp"
+            app:srcCompat="@drawable/save"
+            android:id="@+id/viewSaves"/>
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_marginLeft="10dp"
+            app:fabSize="normal"
+            android:scaleType="center"
+            app:srcCompat="@drawable/smallersize"
+            android:id="@+id/myaccount"/>
+
+
+
+
+
+
+
+
+
+    </LinearLayout>
+
+
+    </LinearLayout>
 </RelativeLayout>
+

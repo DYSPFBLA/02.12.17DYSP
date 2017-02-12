@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -12,17 +13,22 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="fbla.mobileapp.app.dysp.Add_Object"
+            android:name=".Add_Object"
             android:label="@string/title_activity_add__object"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="fbla.mobileapp.app.dysp.Add_Details"
+            android:name=".Add_Details"
             android:label="@string/title_activity_add__details"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name="fbla.mobileapp.app.dysp.List_Item"
-            android:windowSoftInputMode="stateHidden"/>
         <activity
-            android:name="fbla.mobileapp.app.dysp.SplashScreenv2"
+            android:name=".List_Item"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".SplashScreenv2"
+            android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,17 +36,43 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="fbla.mobileapp.app.dysp.LoginActivity" />
-        <activity android:name="fbla.mobileapp.app.dysp.SignIn" />
-        <activity android:name="fbla.mobileapp.app.dysp.AccountInformation" />
         <activity
-            android:name="fbla.mobileapp.app.dysp.NavigationActivity"
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SignIn"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AccountInformation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NavigationActivity"
             android:label="@string/title_activity_navigation"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name="fbla.mobileapp.app.dysp.ViewItem" />
-        <activity android:name="fbla.mobileapp.app.dysp.ViewComments" />
-        <activity android:name="fbla.mobileapp.app.dysp.CreditCard" />
-        <activity android:name="fbla.mobileapp.app.dysp.ThankYouTo" />
+        <activity
+            android:name=".ViewItem"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ViewComments"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CreditCard"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ThankYouTo"
+            android:screenOrientation="portrait" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <provider
+            android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProviderfbla.mobileapp.app.dysp"
+            android:exported="true" />
+
+        <activity android:name=".UserAccountActivity"></activity>
     </application>
 
 </manifest>

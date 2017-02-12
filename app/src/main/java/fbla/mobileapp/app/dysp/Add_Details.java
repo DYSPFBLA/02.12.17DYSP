@@ -54,9 +54,9 @@ public class Add_Details extends AppCompatActivity {
        LinearLayout linear = (LinearLayout) findViewById(R.id.linear);
         final float[] num_of_stars = new float[1];
         final String[] num = new String[1];
-        RatingBar rate = new RatingBar(this);
+        final RatingBar rate = new RatingBar(this);
 
-        TextView additional_text = new TextView(this);
+        final TextView additional_text = new TextView(this);
         TextView additiona_text2 = new TextView(this);
         TextView additional_text3 = new TextView(this);
         TextView additional_text4 = new TextView(this);
@@ -71,16 +71,14 @@ public class Add_Details extends AppCompatActivity {
 
         Button submit = new Button(this);
         submit.setText("Submit Item");
-
-
         if(getIntent().hasExtra("byteArray")) {
              b = BitmapFactory.decodeByteArray(
                     getIntent().getByteArrayExtra("byteArray"),0,getIntent()
                             .getByteArrayExtra("byteArray").length);
         }
 
-       // Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/lettergothic.ttf");
 
+       // Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/lettergothic.ttf");
         title_text3.setHint("Any additional comments?");
         title_text4.setHint("$");
         additional_text.setText("Title:");
@@ -91,10 +89,9 @@ public class Add_Details extends AppCompatActivity {
         additional_text6.setText("Suggested Price:");
         results.setVisibility(View.INVISIBLE);
         final Spinner category_choose = new Spinner(this);
-        ArrayList<String> spinnerArray = new ArrayList<String>();
+        final ArrayList<String> spinnerArray = new ArrayList<String>();
         spinnerArray.add("Select A Category");spinnerArray.add("Baby Items");spinnerArray.add("Books and Papers");spinnerArray.add("Clothing");spinnerArray.add("Electronics/Entertainment");spinnerArray.add("Furniture/Craft or Self-Made Items");spinnerArray.add("Health/Beauty");spinnerArray.add("Holidays, Parties, Special Occasions");spinnerArray.add("Home Items/Tools");spinnerArray.add("Jewelry/Purses/Other Accessories");spinnerArray.add("Shoes");spinnerArray.add("Sports");spinnerArray.add("Toys");spinnerArray.add("Vehicle/Automotive");spinnerArray.add("Other Category");
         rate.setNumStars(5);
-
         rate.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_dropdown_item, spinnerArray) {
@@ -144,8 +141,28 @@ public class Add_Details extends AppCompatActivity {
 
                 }
             });
+            if(getIntent().hasExtra("modifieditem")) {
 
+                String itemname = getIntent().getStringExtra("modifieditem");
+                itemRef.child(itemname).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        final Item item = dataSnapshot.getValue(Item.class);
+                        itemRef.removeEventListener(this);
+                        title_text.setText(item.getTitle());
+                        category_choose.setSelection(spinnerArray.indexOf(item.getCategory()));
+                        title_text2.setText(item.getDescription());
+                        String star = item.getRating(); rate.setRating(Float.parseFloat(star));
+                        title_text3.setText(item.getAdditionalComments());
+                        title_text4.setText(item.getPrice());
+                    }
 
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
             submit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -200,23 +217,16 @@ public class Add_Details extends AppCompatActivity {
         catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
-
     TextWatcher tw = new TextWatcher() {
-
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
         }
-
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
-
         @Override
         public void afterTextChanged(Editable s) {
-
             if (!s.toString().matches("^\\$(\\d{1,3}(\\,\\d{3})*|(\\d+))(\\.\\d{2})?$")) {
                 String userInput = "" + s.toString().replaceAll("[^\\d]", "");
                 StringBuilder cashAmountBuilder = new StringBuilder(userInput);
@@ -228,16 +238,12 @@ public class Add_Details extends AppCompatActivity {
                     cashAmountBuilder.insert(0, '0');
                 }
                 cashAmountBuilder.insert(cashAmountBuilder.length() - 2, '.');
-
                 title_text4.removeTextChangedListener(this);
                 title_text4.setText(cashAmountBuilder.toString());
-
                 title_text4.setTextKeepState("$" + cashAmountBuilder.toString());
                 Selection.setSelection(title_text4.getText(), cashAmountBuilder.toString().length() + 1);
-
                 title_text4.addTextChangedListener(this);
             }
         }
     };
-
 }

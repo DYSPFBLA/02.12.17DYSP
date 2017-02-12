@@ -23,8 +23,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class ViewComments extends AppCompatActivity {
 
@@ -125,6 +128,12 @@ public class ViewComments extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String comment = input.getText().toString();
+                        //THE PURPOSE OF THIS IS TO FILTER OUR COMMENTS SECTION. WE WANT TO MAKE SURE THAT USERS OF ALL AGES WILL FIND APPOPRIATE AND RELEVENT DISCUSSION IN THE COMMENTS SECTION. PLEASE FORGIVE US FOR THE EXPLICIT WORDS.
+                        List<String> words = Arrays.asList("damn", "ass", "fuck", "Fuck", "bitch", "bastard", "cunt", "shit", "crap", "hell", "bitches", "boob", "boobs", "bullshit", "dick", "cock", "nude", "naked");
+                        for (String word : words) {
+                            Pattern rx = Pattern.compile("\\b" + word + "\\b", Pattern.CASE_INSENSITIVE);
+                            comment = rx.matcher(comment).replaceAll(new String(new char[word.length()]).replace('\0', '*'));
+                        }
                         String date = df.format(today).replace("/", "").replace(" ", "").replace(":", "");
                         String message = auth.getCurrentUser().getDisplayName() + "~" + comment;
                         commentRef.child(itemValue).child(date).setValue(date + "=" + message);
@@ -160,4 +169,5 @@ public class ViewComments extends AppCompatActivity {
             }
         });
     }
-}
+
+    }

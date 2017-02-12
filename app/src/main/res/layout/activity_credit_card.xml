@@ -73,17 +73,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:text="PLEASE DO NOT ACTUALLY ENTER YOUR CREDIT CARD INFORMATION."
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="62dp"
-        android:id="@+id/warning"
-        android:textAppearance="@android:style/TextAppearance.Material.Menu"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
-
     <Button
         android:text="Submit"
         android:layout_width="wrap_content"

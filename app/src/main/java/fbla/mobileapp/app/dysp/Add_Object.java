@@ -1,12 +1,14 @@
 package fbla.mobileapp.app.dysp;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +16,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,12 +41,51 @@ public class Add_Object extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add__object);
+        image_diplay = (ImageView)findViewById(R.id.image_display) ;
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = database.getReference("Users");
+        final DatabaseReference itemRef = database.getReference("MasterItems");
+        textView10 = (TextView)findViewById(R.id.textView10);
+        add_item = (Button)findViewById(R.id.add_item);
+        if(getIntent().hasExtra("modifyitem")) {
+            final String itemname = getIntent().getStringExtra("modifyitem"); //STRING BEING RECEIVED
+            itemRef.child(itemname).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    final Item item = dataSnapshot.getValue(Item.class);
+                    itemRef.removeEventListener(this);
+                    byte[] decodedString = Base64.decode(item.getPic(), Base64.DEFAULT);
+                    final Bitmap bit = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    textView10.setVisibility(View.INVISIBLE);
+                    add_item.setText("Modify Item");
+                    image_diplay.setImageBitmap(bit);
+                    add_item.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent confirm_item = new Intent(Add_Object.this, Add_Details.class);
+                            ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                            bit.compress(Bitmap.CompressFormat.JPEG, 50, bs);
+                            confirm_item.putExtra("byteArray", bs.toByteArray());
+                            confirm_item.putExtra("modifieditem", itemname);
+                            startActivity(confirm_item);
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            //Toast.makeText(this, imagestring, Toast.LENGTH_SHORT).show();
+
+        }
         FloatingActionButton takeimage = (FloatingActionButton)findViewById(R.id.imagefab);
         FloatingActionButton fromgallery = (FloatingActionButton)findViewById(R.id.galleryfab);
         RelativeLayout layout = (RelativeLayout)findViewById(R.id.activity_add__object);
         textView7 = (TextView)findViewById(R.id.textView7);
         textView8 = (TextView)findViewById(R.id.textView8);
-        textView10 = (TextView)findViewById(R.id.textView10);
+
         image_diplay = (ImageView)findViewById(R.id.image_display) ;
         fromgallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +111,7 @@ public class Add_Object extends AppCompatActivity {
             }
         });
        // Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/lettergothic.ttf");
-      add_item = (Button)findViewById(R.id.add_item);
+
 
 
 

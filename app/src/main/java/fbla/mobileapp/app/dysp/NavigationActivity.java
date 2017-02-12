@@ -2,6 +2,7 @@ package fbla.mobileapp.app.dysp;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,11 +22,14 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.api.model.StringList;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -62,8 +66,37 @@ public class NavigationActivity extends AppCompatActivity
         FloatingActionButton myAccount = (FloatingActionButton)findViewById(R.id.myaccount);
         FloatingActionButton viewSaves = (FloatingActionButton)findViewById(R.id.viewSaves);
         final ProgressBar pb = (ProgressBar) findViewById(R.id.pb);
+        final ImageView offersimage = (ImageView)findViewById(R.id.imageView4348);
+        offersimage.setVisibility(View.INVISIBLE);
         final int progressStatus = 0;
+        LinearLayout TotalMoneyEarned, ItemsForSale, OffersReceived, UploadNewItem;
+        TotalMoneyEarned = (LinearLayout)findViewById(R.id.TotalMoneyEarnedLayout); ItemsForSale = (LinearLayout)findViewById(R.id.ItemsForSaleLayout); OffersReceived = (LinearLayout)findViewById(R.id.OffersReceivedLayout); UploadNewItem = (LinearLayout)findViewById(R.id.UploadNewItemLayout);
+        ItemsForSale.setClickable(true); OffersReceived.setClickable(true);UploadNewItem.setClickable(true);
+        ItemsForSale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToList = new Intent(NavigationActivity.this, List_Item.class);
+                startActivity(goToList);
+            }
+        });
+        OffersReceived.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToAccount= new Intent(NavigationActivity.this, AccountInformation.class);
+                goToAccount.putExtra("seeoffers", "seeoffers");
+                startActivity(goToAccount);
+            }
+        });
+        UploadNewItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToPost = new Intent(NavigationActivity.this, Add_Object.class);
+                startActivity(goToPost);
+            }
+        });
         final AlertDialog.Builder builder1 = new AlertDialog.Builder(NavigationActivity.this);
+
+
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,7 +219,7 @@ public class NavigationActivity extends AppCompatActivity
        // Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/lettergothic.ttf");
         final TextView WelcomeText = (TextView)findViewById(R.id.WelcomeText);
         //final TextView Welcome = (TextView)findViewById(R.id.textView7);
-        final TextView Sold = (TextView)findViewById(R.id.items_posted);
+        /*final TextView Sold = (TextView)findViewById(R.id.items_posted);
        myRef.child(auth.getCurrentUser().getUid()).child("ItemsSent").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -197,48 +230,85 @@ public class NavigationActivity extends AppCompatActivity
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
-        });
-        final TextView Offers = (TextView)findViewById(R.id.current_offers);
+        });*/
+
        myRef.child(auth.getCurrentUser().getUid()).child("ItemOffers").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 long numOffers = dataSnapshot.getChildrenCount();
                 myRef.removeEventListener(this);
-                Offers.setText(String.valueOf(numOffers));
+                if(numOffers > 0){
+                    offersimage.setVisibility(View.VISIBLE);
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
         final TextView MoneyEarned = (TextView)findViewById(R.id.moneyEarned);
-       myRef.child(auth.getCurrentUser().getUid()).child("Money Raised").addValueEventListener(new ValueEventListener() {
+
+
+        myRef.child(auth.getCurrentUser().getUid()).child("ItemsSold").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                int money = dataSnapshot.getValue(Integer.class);
-                myRef.removeEventListener(this);
-                MoneyEarned.setText("$" + String.valueOf(money));
+                final double[] totalmoneyraised = {0};
+                //Toast.makeText(NavigationActivity.this, String.valueOf(dataSnapshot.getChildrenCount()), Toast.LENGTH_SHORT).show();
+                ArrayList<Item> ObjectList = new ArrayList<Item>();
+                if (dataSnapshot.getChildrenCount() == 0){
+                    MoneyEarned.setText("$" + String.valueOf(totalmoneyraised[0]));
+                }
+                else {
+                    for(DataSnapshot dsp : dataSnapshot.getChildren()){
+                        Item tempItem = dsp.getValue(Item.class);
+                        ObjectList.add(tempItem);
+                        String tempitemprice = tempItem.getPrice().replace("$", "");
+                        //Toast.makeText(NavigationActivity.this, tempitemprice, Toast.LENGTH_SHORT).show();
+                        totalmoneyraised[0] = totalmoneyraised[0] + Double.parseDouble(tempitemprice);
 
+                    }
+                }
+                MoneyEarned.setText("$" + Double.valueOf(totalmoneyraised[0]));
+                myRef.removeEventListener(this);
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
             }
         });
-        final TextView Goal = (TextView)findViewById(R.id.goal);
 
+        final TextView progressgoal = (TextView) findViewById(R.id.progressgoal);
         myRef.child(auth.getCurrentUser().getUid()).child("MoneyGoal").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                final double[] totalmoneyraised = {0};
                 final String money = dataSnapshot.getValue(String.class);
                 myRef.removeEventListener(this);
-                Goal.setText("$" + money);
-                myRef.child(auth.getCurrentUser().getUid()).child("Money Raised").addValueEventListener(new ValueEventListener() {
+                myRef.child(auth.getCurrentUser().getUid()).child("ItemsSold").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        int moneyRaised = dataSnapshot.getValue(Integer.class);
-                        int moneyGoal = Integer.parseInt(money);
-                        int intermediate = 100* moneyRaised;
-                        int guy =  intermediate/(moneyGoal+1);
-                        pb.setProgress(guy);
+                        //Toast.makeText(NavigationActivity.this, String.valueOf(dataSnapshot.getChildrenCount()), Toast.LENGTH_SHORT).show();
+                        ArrayList<Item> ObjectList = new ArrayList<Item>();
+                        if (dataSnapshot.getChildrenCount() == 0){
+
+                        }
+                        else {
+                            for(DataSnapshot dsp : dataSnapshot.getChildren()){
+                                Item tempItem = dsp.getValue(Item.class);
+                                ObjectList.add(tempItem);
+                                String tempitemprice = tempItem.getPrice().replace("$", "");
+                                //Toast.makeText(NavigationActivity.this, tempitemprice, Toast.LENGTH_SHORT).show();
+                                totalmoneyraised[0] = totalmoneyraised[0] + Double.parseDouble(tempitemprice);
+
+                            }
+                        }
+                        myRef.removeEventListener(this);
+                        Double moneyGoal = Double.parseDouble(money);
+                        String moneyraised = String.valueOf(totalmoneyraised[0]);
+                        progressgoal.setText("Progress Towards Goal:       $" + moneyraised + "/" + money);
+                        double intermediate = 100.0* totalmoneyraised[0];
+                        double guy =  intermediate/(moneyGoal+1.0);
+                        pb.setProgress((int) guy);
                     }
 
                     @Override
@@ -293,9 +363,6 @@ public class NavigationActivity extends AppCompatActivity
 
         TextView Username = (TextView)headerView.findViewById(R.id.username1);
         TextView useremail = (TextView)headerView.findViewById(R.id.User_email);
-        TextView object_sold = (TextView)findViewById(R.id.textView2); //object_sold.setTypeface(custom);
-        TextView money_raised = (TextView)findViewById(R.id.textView3); //money_raised.setTypeface(custom);
-        TextView currentOffers = (TextView)findViewById(R.id.textView4);// currentOffers.setTypeface(custom);
         //Button add_item = (Button)findViewById(R.id.add_item);
        // Button view_item = (Button)findViewById(R.id.view_items);
        // Button view_account = (Button)findViewById(R.id.your_account);
@@ -314,7 +381,7 @@ public class NavigationActivity extends AppCompatActivity
             myRef.child(auth.getCurrentUser().getUid()).child("Email").setValue(auth.getCurrentUser().getEmail());
               try {
                   String displayName = auth.getCurrentUser().getDisplayName().substring(0, auth.getCurrentUser().getDisplayName().indexOf(" "));
-                  WelcomeText.setText("Welcome " + displayName + "!");
+                  WelcomeText.setText("Welcome, " + displayName + "!");
                 //WelcomeText.setText(auth.getCurrentUser().getDisplayName());
                 WelcomeText.setTypeface(null, Typeface.BOLD);
                 //Welcome.setTypeface(null, Typeface.BOLD);

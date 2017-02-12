@@ -2,6 +2,7 @@ package fbla.mobileapp.app.dysp;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -17,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,6 +44,8 @@ public class AccountInformation extends AppCompatActivity {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference("Users");
         final DatabaseReference itemRef = database.getReference("MasterItems");
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        final ShareDialog shareDialog = new ShareDialog(this);
         final DatabaseReference commentRef = database.getReference("Comments");
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
        // Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/lettergothic.ttf");
@@ -62,6 +68,7 @@ public class AccountInformation extends AppCompatActivity {
             }
         });
         Button changeEmail = (Button)findViewById(R.id.changeEmail);
+
         final EditText input = new EditText(AccountInformation.this);
         input.setHint("Enter email");
         changeEmail.setOnClickListener(new View.OnClickListener() {
@@ -209,6 +216,7 @@ public class AccountInformation extends AppCompatActivity {
         }catch (Exception e){
             Toast.makeText(this, e.getStackTrace().toString(), Toast.LENGTH_LONG).show();
         }
+
         Button viewOffers = (Button)findViewById(R.id.ViewOffers);
         viewOffers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -299,17 +307,90 @@ public class AccountInformation extends AppCompatActivity {
                             }
                         });
                         builderSingle.show();
-
-
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 });
             }
         });
+        if(getIntent().hasExtra("seeoffers")) {
+            viewOffers.performClick();
+        }
+
+
+        Button ModifyItems = (Button)findViewById(R.id.ModifyItems);
+        try {
+            ModifyItems.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final AlertDialog.Builder builderSingle = new AlertDialog.Builder(AccountInformation.this);
+                    builderSingle.setTitle("Modify Item");
+                    myRef.child(auth.getCurrentUser().getUid()).child("ItemsSent").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(final DataSnapshot dataSnapshot) {
+                            final ArrayList<Item> ObjectList = new ArrayList<Item>();
+                            ArrayList<String> ObjectTitles = new ArrayList<String>();
+                            ObjectTitles.add("Select an Item to Modify:");
+                            for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                                Item tempItem = dsp.getValue(Item.class);
+                                ObjectList.add(tempItem);
+                            }
+                            for (Item item : ObjectList) {
+                                String title = item.getTitle().toString();
+                                //Toast.makeText(List_Item.this, title, Toast.LENGTH_SHORT).show();
+                                ObjectTitles.add(title);
+                            }
+                            myRef.removeEventListener(this);
+                            if (ObjectTitles.isEmpty()) {
+                                Toast.makeText(AccountInformation.this, "No Items To Modify!", Toast.LENGTH_SHORT).show();
+                                Intent refreshPage = new Intent(AccountInformation.this, NavigationView.class);
+                                startActivity(refreshPage);
+                            }
+                            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(AccountInformation.this, android.R.layout.simple_list_item_1, ObjectTitles);
+                            builderSingle.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
+                                    startActivity(refreshPage);
+                                }
+                            });
+                            builderSingle.setAdapter(adapter, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String strName = adapter.getItem(which);
+                                    if(strName.equals("Select an Item to Modify:")){
+                                        Toast.makeText(AccountInformation.this, "That Is Not An Item", Toast.LENGTH_SHORT).show();
+                                        Intent home12 = new Intent(AccountInformation.this, AccountInformation.class);
+                                        startActivity(home12);
+                                    }
+                                    else {
+                                       // myRef.child(auth.getCurrentUser().getUid()).child("ItemsSent").child(strName).removeValue();
+                                        //itemRef.child(strName).removeValue();
+                                        //commentRef.child(strName).removeValue();
+
+                                        Intent modifyItem = new Intent(AccountInformation.this, Add_Object.class);
+                                        //Toast.makeText(AccountInformation.this, ObjectList.get(which-1).getTitle().toString(), Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(AccountInformation.this, "Item Removed!", Toast.LENGTH_SHORT).show();
+                                        modifyItem.putExtra("modifyitem", ObjectList.get(which-1).getTitle().toString());
+                                        startActivity(modifyItem);
+                                    }
+                                }
+                            });
+                            builderSingle.show();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            });
+        }catch (Exception e){
+            Toast.makeText(this, e.getStackTrace().toString(), Toast.LENGTH_LONG).show();
+        }
 
         Button InputCreditCard = (Button)findViewById(R.id.InputCreditCard);
         InputCreditCard.setOnClickListener(new View.OnClickListener() {
@@ -333,9 +414,14 @@ public class AccountInformation extends AppCompatActivity {
         ConnectToFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uriUrl = Uri.parse("https://www.facebook.com/");
-                Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
-                startActivity(launchBrowser);
+                ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                        .setContentTitle("Join DYSP FBLA!")
+                        .setContentDescription(
+                                "I just joined DYSP FBLA! This app is inteded for FBLA users to raise funds to attend state and national FBLA Conferences! You can join me too by following this link!")
+                        .setContentUrl(Uri.parse("https://play.google.com/store/apps/details?id=fbla.mobileapp.app.dysp"))
+                        .build();
+
+                shareDialog.show(linkContent);
             }
         });
         Button signOut = (Button)findViewById(R.id.SignOut);

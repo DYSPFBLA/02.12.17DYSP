@@ -78,13 +78,26 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:id="@+id/deleteItems" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1">
 
             <Button
                 android:text="View Offers"
-                android:layout_width="match_parent"
+                android:layout_width="172dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:id="@+id/ViewOffers" />
+            <Button
+                android:text="Modify Items"
+                android:layout_width="172dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:id="@+id/ModifyItems" />
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

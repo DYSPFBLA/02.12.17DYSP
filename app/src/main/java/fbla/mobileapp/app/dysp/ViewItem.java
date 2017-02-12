@@ -31,6 +31,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class ViewItem extends AppCompatActivity {
     public EditText input;
 
@@ -47,6 +52,8 @@ public class ViewItem extends AppCompatActivity {
         final DatabaseReference itemRef = database.getReference("MasterItems");
         final String itemValue = getIntent().getExtras().getString("itemname");
 
+        final DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        final Date today = Calendar.getInstance().getTime();
 
         final LinearLayout linear = (LinearLayout) findViewById(R.id.linear);
         final LinearLayout linear2 = new LinearLayout(this);
@@ -149,20 +156,21 @@ public class ViewItem extends AppCompatActivity {
                                     int price_postednum = Integer.valueOf(input.getText().toString().replace("$", "").replace(".", "")); //Price offered by user.
                                     if(price_postednum >= posted_pricenum) {
                                         Toast.makeText(ViewItem.this, "Item Bought", Toast.LENGTH_SHORT).show();
+                                       final String date2 = df.format(today).replace("/", "").replace(" ", "").replace(":", "");
                                         myRef.child(item.getOwnedBy()).child("Money Raised").addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot dataSnapshot) {
                                                 int money = dataSnapshot.getValue(Integer.class);
                                                 myRef.removeEventListener(this);
                                                 int newtotal = money + (posted_pricenum/100);
-                                                myRef.child(item.getOwnedBy()).child("Money Raised").setValue(newtotal);
                                             }
-
                                             @Override
                                             public void onCancelled(DatabaseError databaseError) {
 
                                             }
                                         });
+                                        myRef.child(item.getOwnedBy()).child("ItemsSold").child(itemValue).setValue(item);
+                                        myRef.child(item.getOwnedBy()).child("ItemsSent").child(itemValue).removeValue();
                                         itemRef.child(item.getTitle()).child("bought").setValue(true);
                                         myRef.child(auth.getCurrentUser().getUid()).child("ItemsBought").child(item.getTitle()).setValue(item);
                                         itemRef.child(item.getTitle()).child("ownedBy").setValue(auth.getCurrentUser().getUid());
