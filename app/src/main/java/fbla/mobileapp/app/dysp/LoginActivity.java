@@ -41,17 +41,9 @@ public class LoginActivity extends AppCompatActivity {
 
         if (auth.getCurrentUser() != null) {
             startActivity(new Intent(this, NavigationActivity.class));
-            //finish();
-            //auth.signOut();
-            //Toast.makeText(LoginActivity.this, auth.getCurrentUser().getEmail().toString(), Toast.LENGTH_LONG).show();
         }
-
         // set the view now
         setContentView(R.layout.activity_login);
-        //Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/lettergothic.ttf");
-
-        //  Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        // setSupportActionBar(toolbar);
         WelcomeText = (TextView)findViewById(R.id.WelcomeText);
         inputName = (EditText) findViewById(R.id.name);
         inputEmail = (EditText) findViewById(R.id.email);
@@ -64,14 +56,12 @@ public class LoginActivity extends AppCompatActivity {
 
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
-
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, SignIn.class));
             }
         });
-
          btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,12 +69,10 @@ public class LoginActivity extends AppCompatActivity {
                 final String name = inputName.getText().toString();
                 String email = inputEmail.getText().toString();
                 final String password = inputPassword.getText().toString();
-
                 if (TextUtils.isEmpty(email)) {
                     Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
                 if (TextUtils.isEmpty(password)) {
                     Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
                     return;
@@ -93,8 +81,6 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-
                 //authenticate user
                 auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -118,7 +104,6 @@ public class LoginActivity extends AppCompatActivity {
                                     });
                             Toast.makeText(getApplicationContext(), "Welcome " + name.toString() + "!", Toast.LENGTH_LONG).show();
                             String uid = task.getResult().getUser().getUid().toString();
-                           // String displayname = task.getResult().getUser().getEmail().toString();
                             myRef.child(uid).setValue(task.getResult().getUser().getEmail().toString());
                             long item = 0;
                             myRef.child(uid).child("Money Raised").setValue(item);
@@ -128,7 +113,6 @@ public class LoginActivity extends AppCompatActivity {
                             Intent signinactivity = new Intent(LoginActivity.this, SignIn.class);
                             signinactivity.putExtra("Name", name);
                             startActivity(signinactivity);
-                           // finish();
                         }
 
                     }

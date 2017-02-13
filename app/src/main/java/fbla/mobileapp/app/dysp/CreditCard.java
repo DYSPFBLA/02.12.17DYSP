@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import butterknife.ButterKnife;
@@ -14,27 +13,24 @@ import butterknife.OnTextChanged;
 
 public class CreditCard extends AppCompatActivity {
 
+    private static final int cardnumberdigits = 19; // Pattern of the Credit Card thingy 0000-0000-0000-0000
+    private static final int cardnumbertotaldigits = 16;
+    private static final int fifthmodulo = 5;
+    private static final int dividerposition = fifthmodulo - 1;
+    private static final char cardnumberdivide = '-';
+    private static final int datesymbols = 5; // pattern MM/YY
+    private static final int datedigits = 4; // pattern: MM + YY
+    private static final int dividermodule2 = 3;
+    private static final int dividerpos = dividermodule2 - 1;
+    private static final char cardatedash = '/';
 
-    private static final int CARD_NUMBER_TOTAL_SYMBOLS = 19; // size of pattern 0000-0000-0000-0000
-    private static final int CARD_NUMBER_TOTAL_DIGITS = 16; // max numbers of digits in pattern: 0000 x 4
-    private static final int CARD_NUMBER_DIVIDER_MODULO = 5; // means divider position is every 5th symbol beginning with 1
-    private static final int CARD_NUMBER_DIVIDER_POSITION = CARD_NUMBER_DIVIDER_MODULO - 1; // means divider position is every 4th symbol beginning with 0
-    private static final char CARD_NUMBER_DIVIDER = '-';
-
-    private static final int CARD_DATE_TOTAL_SYMBOLS = 5; // size of pattern MM/YY
-    private static final int CARD_DATE_TOTAL_DIGITS = 4; // max numbers of digits in pattern: MM + YY
-    private static final int CARD_DATE_DIVIDER_MODULO = 3; // means divider position is every 3rd symbol beginning with 1
-    private static final int CARD_DATE_DIVIDER_POSITION = CARD_DATE_DIVIDER_MODULO - 1; // means divider position is every 2nd symbol beginning with 0
-    private static final char CARD_DATE_DIVIDER = '/';
-
-    private static final int CARD_CVC_TOTAL_SYMBOLS = 3;
+    private static final int securitysymbols = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_credit_card);
         ButterKnife.bind(this);
-       // Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/lettergothic.ttf");
         Button submit = (Button)findViewById(R.id.Submit);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,28 +41,24 @@ public class CreditCard extends AppCompatActivity {
             }
         });
     }
-
     @OnTextChanged(value = R.id.cardNumberEditText, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     protected void onCardNumberTextChanged(Editable s) {
-        if (!isInputCorrect(s, CARD_NUMBER_TOTAL_SYMBOLS, CARD_NUMBER_DIVIDER_MODULO, CARD_NUMBER_DIVIDER)) {
-            s.replace(0, s.length(), concatString(getDigitArray(s, CARD_NUMBER_TOTAL_DIGITS), CARD_NUMBER_DIVIDER_POSITION, CARD_NUMBER_DIVIDER));
+        if (!isInputCorrect(s, cardnumberdigits, fifthmodulo, cardnumberdivide)) {
+            s.replace(0, s.length(), concatString(getDigitArray(s, cardnumbertotaldigits), dividerposition, cardnumberdivide));
         }
     }
-
     @OnTextChanged(value = R.id.cardDateEditText, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     protected void onCardDateTextChanged(Editable s) {
-        if (!isInputCorrect(s, CARD_DATE_TOTAL_SYMBOLS, CARD_DATE_DIVIDER_MODULO, CARD_DATE_DIVIDER)) {
-            s.replace(0, s.length(), concatString(getDigitArray(s, CARD_DATE_TOTAL_DIGITS), CARD_DATE_DIVIDER_POSITION, CARD_DATE_DIVIDER));
+        if (!isInputCorrect(s, datesymbols, dividermodule2, cardatedash)) {
+            s.replace(0, s.length(), concatString(getDigitArray(s, datedigits), dividerpos, cardatedash));
         }
     }
-
     @OnTextChanged(value = R.id.cardCVCEditText, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     protected void onCardCVCTextChanged(Editable s) {
-        if (s.length() > CARD_CVC_TOTAL_SYMBOLS) {
-            s.delete(CARD_CVC_TOTAL_SYMBOLS, s.length());
+        if (s.length() > securitysymbols) {
+            s.delete(securitysymbols, s.length());
         }
     }
-
     private boolean isInputCorrect(Editable s, int size, int dividerPosition, char divider) {
         boolean isCorrect = s.length() <= size;
         for (int i = 0; i < s.length(); i++) {
@@ -78,7 +70,6 @@ public class CreditCard extends AppCompatActivity {
         }
         return isCorrect;
     }
-
     private String concatString(char[] digits, int dividerPosition, char divider) {
         final StringBuilder formatted = new StringBuilder();
 
@@ -93,7 +84,6 @@ public class CreditCard extends AppCompatActivity {
 
         return formatted.toString();
     }
-
     private char[] getDigitArray(final Editable s, final int size) {
         char[] digits = new char[size];
         int index = 0;

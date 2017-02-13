@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:202854184740:android:7262afbf3b716fef",
         "android_client_info": {
-          "package_name": "fbla.mobileapp.app.dysp"
+          "package_name": "com.example.netassistant.dysp"
         }
       },
       "oauth_client": [
@@ -18,12 +18,56 @@
           "client_id": "202854184740-k9ssrug39eipj7lotn6oqchgausjkdub.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "fbla.mobileapp.app.dysp",
+            "package_name": "com.example.netassistant.dysp",
             "certificate_hash": "414C91F9EA6029D8C6E11D5BBDF82869A38A787F"
           }
         },
         {
           "client_id": "202854184740-eqigfqhmb3abt2v2fjt45jschfsliums.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.netassistant.dysp",
+            "certificate_hash": "75383B9CAC618F2EDB4F25871280DBA3A9933C33"
+          }
+        },
+        {
+          "client_id": "202854184740-d45n8g65tgbkhc2kp6q0pfoqqufq26td.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwtXC97ZZkDxvo9ESS3KxRo5CBCD9mCEI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "202854184740-d45n8g65tgbkhc2kp6q0pfoqqufq26td.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:202854184740:android:9b3531cbd4368746",
+        "android_client_info": {
+          "package_name": "fbla.mobileapp.app.dysp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "202854184740-i7l10hflifhod47mbnpsmv985vsttrq4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "fbla.mobileapp.app.dysp",

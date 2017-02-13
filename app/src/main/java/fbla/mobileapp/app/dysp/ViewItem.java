@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +12,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.Selection;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.UnderlineSpan;
 import android.util.Base64;
 import android.view.Gravity;
 import android.view.View;
@@ -43,7 +46,6 @@ public class ViewItem extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_item);
-        //final Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/lettergothic.ttf");
         input = new EditText(this);
         input.setHint("Enter your price here");
         final FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -51,9 +53,6 @@ public class ViewItem extends AppCompatActivity {
         final DatabaseReference myRef = database.getReference("Users");
         final DatabaseReference itemRef = database.getReference("MasterItems");
         final String itemValue = getIntent().getExtras().getString("itemname");
-
-        final DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        final Date today = Calendar.getInstance().getTime();
 
         final LinearLayout linear = (LinearLayout) findViewById(R.id.linear);
         final LinearLayout linear2 = new LinearLayout(this);
@@ -71,36 +70,42 @@ public class ViewItem extends AppCompatActivity {
         final Button displayComments = new Button(this);
         final Button buyItem = new Button(this);
         final Button addtoInterested = new Button(this);
-        displayImage.setMinimumHeight(1000);
+        displayImage.setMinimumHeight(600); //1000 for App Store
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_HORIZONTAL;
         displayRating.setLayoutParams(params);
         displayRating.setNumStars(5);
-
-
         itemRef.child(itemValue).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 try {
                     final Item item = dataSnapshot.getValue(Item.class);
                     itemRef.removeEventListener(this);
-
                     byte[] decodedString = Base64.decode(item.getPic(), Base64.DEFAULT);
                     Bitmap bit = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    displayTitle.setText(item.getTitle()); displayTitle.setGravity(Gravity.CENTER_HORIZONTAL); displayTitle.setTextSize(25); displayTitle.setPadding(0, 0, 0, 10);
+                    displayTitle.setText(item.getTitle()); displayTitle.setGravity(Gravity.CENTER_HORIZONTAL); displayTitle.setTextSize(25); displayTitle.setPadding(10, 10, 10, 10); displayTitle.setTypeface(null,Typeface.BOLD);displayTitle.setTextColor(Color.BLACK);
                     displayImage.setImageBitmap(bit);
-                    diplayDescription.setText(item.getDescription()); diplayDescription.setGravity(Gravity.LEFT); diplayDescription.setTextSize(15); diplayDescription.setPadding(0, 10, 0, 10);
+                    diplayDescription.setText(item.getDescription() + "."); diplayDescription.setGravity(Gravity.LEFT); diplayDescription.setTextSize(15); diplayDescription.setPadding(0, 10, 0, 60); diplayDescription.setTextColor(Color.BLACK);
                     String star = item.getRating();
                     displayRating.setRating(Float.parseFloat(star));
                     displayRating.setIsIndicator(true);
-                    displayPrice.setText("Price: " + item.getPrice()); displayPrice.setTextSize(18); displayPrice.setPadding(0,10, 0, 10); displayLocation.setGravity(Gravity.LEFT);
+                    displayPrice.setText("Price: " + item.getPrice()); displayPrice.setTextSize(18); displayPrice.setPadding(10,10, 0, 30); displayLocation.setGravity(Gravity.LEFT); displayPrice.setTextColor(Color.BLACK); displayLocation.setTextColor(Color.BLACK);
                     final DatabaseReference owner = myRef.child(item.getOwnedBy()).child("DispayName");
                     owner.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            displayOwner.setText("Owner: " + dataSnapshot.getValue(String.class));
-                            owner.removeEventListener(this);
-                            displayOwner.setPadding(0,10, 0, 10); displayOwner.setTextSize(16); displayLocation.setGravity(Gravity.LEFT);
+                            SpannableString content = new SpannableString("Owner: " + dataSnapshot.getValue(String.class));
+                            displayOwner.setTextColor(Color.parseColor("#0000FF")); displayOwner.setTypeface(null, Typeface.BOLD); content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+                            displayOwner.setText(content);
+                            displayOwner.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent userPage = new Intent(ViewItem.this, UserAccountActivity.class);
+                                    userPage.putExtra("username", item.getOwnedBy());
+                                    startActivity(userPage);
+                                }
+                            });
+                            displayOwner.setPadding(0,10, 0, 30); displayOwner.setTextSize(16); displayLocation.setGravity(Gravity.LEFT);
                             owner.removeEventListener(this);
                         }
 
@@ -109,8 +114,8 @@ public class ViewItem extends AppCompatActivity {
 
                         }
                     });
-                    displayLocation.setText("Location: " + item.getLocation());displayLocation.setGravity(Gravity.LEFT); displayLocation.setTextSize(16); displayLocation.setPadding(0, 10, 0, 10);
-                    displayCategory.setText("Category: " + item.getCategory());displayCategory.setGravity(Gravity.LEFT); displayCategory.setTextSize(16); displayCategory.setPadding(0, 10, 0, 10);
+                    displayLocation.setText("Location: " + item.getLocation());displayLocation.setGravity(Gravity.LEFT); displayLocation.setTextSize(16); displayLocation.setPadding(0, 10, 0, 30); displayCategory.setTextColor(Color.BLACK);
+                    displayCategory.setText("Category: " + item.getCategory());displayCategory.setGravity(Gravity.LEFT); displayCategory.setTextSize(16); displayCategory.setPadding(0, 10, 0, 20); //120 for App Store. 85 for Linear Layout for Home Screen
                     displayComments.setText("View Comments");
                     itemRef.removeEventListener(this);
                     buyItem.setText("Buy Item");
@@ -156,19 +161,6 @@ public class ViewItem extends AppCompatActivity {
                                     int price_postednum = Integer.valueOf(input.getText().toString().replace("$", "").replace(".", "")); //Price offered by user.
                                     if(price_postednum >= posted_pricenum) {
                                         Toast.makeText(ViewItem.this, "Item Bought", Toast.LENGTH_SHORT).show();
-                                       final String date2 = df.format(today).replace("/", "").replace(" ", "").replace(":", "");
-                                        myRef.child(item.getOwnedBy()).child("Money Raised").addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                int money = dataSnapshot.getValue(Integer.class);
-                                                myRef.removeEventListener(this);
-                                                int newtotal = money + (posted_pricenum/100);
-                                            }
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-
-                                            }
-                                        });
                                         myRef.child(item.getOwnedBy()).child("ItemsSold").child(itemValue).setValue(item);
                                         myRef.child(item.getOwnedBy()).child("ItemsSent").child(itemValue).removeValue();
                                         itemRef.child(item.getTitle()).child("bought").setValue(true);
@@ -227,7 +219,6 @@ public class ViewItem extends AppCompatActivity {
 
 
                 }catch (Exception e){
-                    //Toast.makeText(ViewItem.this, Arrays.toString(e.getStackTrace()), Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
 

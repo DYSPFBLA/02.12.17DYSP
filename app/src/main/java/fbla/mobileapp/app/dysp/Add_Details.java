@@ -35,7 +35,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
-
 public class Add_Details extends AppCompatActivity {
     public EditText title_text4;
     public Bitmap b;
@@ -48,27 +47,15 @@ public class Add_Details extends AppCompatActivity {
         final DatabaseReference commentRef = database.getReference("Comments");
         final DatabaseReference itemRef = database.getReference("MasterItems");
         final FirebaseAuth auth = FirebaseAuth.getInstance();
-        //Uri uri =  getIntent().getParcelableExtra("imageUri");
-       // Uri urii =  getIntent().getParcelableExtra("imageUrii");
-
        LinearLayout linear = (LinearLayout) findViewById(R.id.linear);
         final float[] num_of_stars = new float[1];
         final String[] num = new String[1];
         final RatingBar rate = new RatingBar(this);
-
         final TextView additional_text = new TextView(this);
-        TextView additiona_text2 = new TextView(this);
-        TextView additional_text3 = new TextView(this);
-        TextView additional_text4 = new TextView(this);
-        TextView additional_text5 = new TextView(this);
-        TextView additional_text6 = new TextView(this);
-        final TextView results = new TextView(this);
-
-        final EditText title_text = new EditText(this);
-        final EditText title_text2 = new EditText(this);
-        final EditText title_text3 = new EditText(this);
+        TextView additiona_text2 = new TextView(this);TextView additional_text3 = new TextView(this);TextView additional_text4 = new TextView(this);
+        TextView additional_text5 = new TextView(this);TextView additional_text6 = new TextView(this);final TextView results = new TextView(this);
+        final EditText title_text = new EditText(this);final EditText title_text2 = new EditText(this);final EditText title_text3 = new EditText(this);
         title_text4 = new EditText(this);
-
         Button submit = new Button(this);
         submit.setText("Submit Item");
         if(getIntent().hasExtra("byteArray")) {
@@ -76,9 +63,6 @@ public class Add_Details extends AppCompatActivity {
                     getIntent().getByteArrayExtra("byteArray"),0,getIntent()
                             .getByteArrayExtra("byteArray").length);
         }
-
-
-       // Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/lettergothic.ttf");
         title_text3.setHint("Any additional comments?");
         title_text4.setHint("$");
         additional_text.setText("Title:");
@@ -95,12 +79,10 @@ public class Add_Details extends AppCompatActivity {
         rate.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_dropdown_item, spinnerArray) {
-
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
                 return v;
             }
-
             public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
                 View v =super.getDropDownView(position, convertView, parent);
                 return v;
@@ -116,33 +98,22 @@ public class Add_Details extends AppCompatActivity {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.topMargin = 30;
             additional_text.setLayoutParams(layoutParams);
-            linear.addView(additional_text);
-            linear.addView(title_text);
-            linear.addView(additional_text3);
-            linear.addView(category_choose);
-            linear.addView(additiona_text2);
-            linear.addView(title_text2);
-            linear.addView(additional_text4);
-            linear.addView(rate);
-            linear.addView(additional_text5);
-            linear.addView(title_text3);
-            linear.addView(additional_text6);
-            title_text4.setInputType(InputType.TYPE_CLASS_NUMBER);
+            linear.addView(additional_text);linear.addView(title_text);linear.addView(additional_text3);linear.addView(category_choose);
+            linear.addView(additiona_text2);linear.addView(title_text2);linear.addView(additional_text4);linear.addView(rate);
+            linear.addView(additional_text5);linear.addView(title_text3);
+            linear.addView(additional_text6);title_text4.setInputType(InputType.TYPE_CLASS_NUMBER);
             title_text4.addTextChangedListener(tw);
             linear.addView(title_text4);
             linear.addView(submit);
             linear.addView(results);
-           // Toast.makeText(this, "Please don't use \".\" in any entered text", Toast.LENGTH_LONG).show();
             rate.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                 @Override
                 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                     num_of_stars[0] = rating;
                     num[0] = String.valueOf(rating);
-
                 }
             });
             if(getIntent().hasExtra("modifieditem")) {
-
                 String itemname = getIntent().getStringExtra("modifieditem");
                 itemRef.child(itemname).addValueEventListener(new ValueEventListener() {
                     @Override
@@ -156,10 +127,8 @@ public class Add_Details extends AppCompatActivity {
                         title_text3.setText(item.getAdditionalComments());
                         title_text4.setText(item.getPrice());
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 });
             }
@@ -167,7 +136,6 @@ public class Add_Details extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if(category_choose.getSelectedItem().toString() != "Select A Category" ) {
-
                         final Item new_Object = new Item();
                         new_Object.setTitle(title_text.getText().toString().replace('.', ' '));
                         new_Object.setDescription(title_text2.getText().toString());
@@ -181,7 +149,6 @@ public class Add_Details extends AppCompatActivity {
                         new_Object.setOwnedBy(auth.getCurrentUser().getUid());
                         ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
                         b.compress(Bitmap.CompressFormat.JPEG, 100, bYtE);
-                        b.recycle();
                         byte[] byteArray = bYtE.toByteArray();
                         String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         new_Object.setPic(imageFile);
@@ -194,10 +161,8 @@ public class Add_Details extends AppCompatActivity {
                                 myRef.child(auth.getCurrentUser().getUid()).child("ItemsSent").child(new_Object.getTitle()).setValue(new_Object);
                                 itemRef.child(new_Object.getTitle()).setValue(new_Object);
                             }
-
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
-
                             }
                         });
                         commentRef.child(new_Object.getTitle()).setValue("ItemAdded");
@@ -212,7 +177,6 @@ public class Add_Details extends AppCompatActivity {
             });
         }
         catch (DatabaseException e){
-
         }
         catch (Exception e) {
             e.printStackTrace();

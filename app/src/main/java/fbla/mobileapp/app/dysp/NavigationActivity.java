@@ -29,7 +29,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.api.model.StringList;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -68,7 +67,6 @@ public class NavigationActivity extends AppCompatActivity
         final ProgressBar pb = (ProgressBar) findViewById(R.id.pb);
         final ImageView offersimage = (ImageView)findViewById(R.id.imageView4348);
         offersimage.setVisibility(View.INVISIBLE);
-        final int progressStatus = 0;
         LinearLayout TotalMoneyEarned, ItemsForSale, OffersReceived, UploadNewItem;
         TotalMoneyEarned = (LinearLayout)findViewById(R.id.TotalMoneyEarnedLayout); ItemsForSale = (LinearLayout)findViewById(R.id.ItemsForSaleLayout); OffersReceived = (LinearLayout)findViewById(R.id.OffersReceivedLayout); UploadNewItem = (LinearLayout)findViewById(R.id.UploadNewItemLayout);
         ItemsForSale.setClickable(true); OffersReceived.setClickable(true);UploadNewItem.setClickable(true);
@@ -95,8 +93,6 @@ public class NavigationActivity extends AppCompatActivity
             }
         });
         final AlertDialog.Builder builder1 = new AlertDialog.Builder(NavigationActivity.this);
-
-
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,14 +110,14 @@ public class NavigationActivity extends AppCompatActivity
                         Intent refresh = new Intent(NavigationActivity.this, NavigationActivity.class);
                         Toast.makeText(NavigationActivity.this, "Location Updated!", Toast.LENGTH_SHORT).show();
                         startActivity(refresh);
+                        dialog.cancel();
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        dialog.cancel();
                         builder1.setView(null);
-                        Intent refresh = new Intent(NavigationActivity.this, NavigationActivity.class);
-                        startActivity(refresh);
                     }
                 });
                 builder1.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -152,7 +148,7 @@ public class NavigationActivity extends AppCompatActivity
         myAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToAccount= new Intent(NavigationActivity.this, AccountInformation.class);
+                Intent goToAccount= new Intent(NavigationActivity.this, UserAccountActivity.class);
                 startActivity(goToAccount);
             }
         });
@@ -183,8 +179,7 @@ public class NavigationActivity extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                Intent refreshPage = new Intent(NavigationActivity.this, NavigationActivity.class);
-                                startActivity(refreshPage);
+                                dialog.cancel();
                             }
                         });
                         builderSingle.setAdapter(adapter, new DialogInterface.OnClickListener() {
@@ -193,8 +188,7 @@ public class NavigationActivity extends AppCompatActivity
                                 String strName = adapter.getItem(which);
                                 if(strName.equals("Select a Saved Item:")){
                                     Toast.makeText(NavigationActivity.this, "That Is Not A Saved Item", Toast.LENGTH_SHORT).show();
-                                    Intent home12 = new Intent(NavigationActivity.this, NavigationActivity.class);
-                                    startActivity(home12);
+                                    dialog.cancel();dialog.dismiss();
                                 }
                                 else {
                                     Intent refreshPage = new Intent(NavigationActivity.this, ViewItem.class);
@@ -203,36 +197,26 @@ public class NavigationActivity extends AppCompatActivity
                                 }
                             }
                         });
+                        builderSingle.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                dialog.dismiss();
+                                dialog.cancel();
+                            }
+                        });
                         builderSingle.show();
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 });
-
             }
         });
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
-       // Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/lettergothic.ttf");
         final TextView WelcomeText = (TextView)findViewById(R.id.WelcomeText);
-        //final TextView Welcome = (TextView)findViewById(R.id.textView7);
-        /*final TextView Sold = (TextView)findViewById(R.id.items_posted);
-       myRef.child(auth.getCurrentUser().getUid()).child("ItemsSent").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int numitems = (int) dataSnapshot.getChildrenCount();
-                myRef.removeEventListener(this);
-                Sold.setText(String.valueOf(numitems));
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });*/
-
-       myRef.child(auth.getCurrentUser().getUid()).child("ItemOffers").addListenerForSingleValueEvent(new ValueEventListener() {
+        myRef.child(auth.getCurrentUser().getUid()).child("ItemOffers").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 long numOffers = dataSnapshot.getChildrenCount();
@@ -246,13 +230,10 @@ public class NavigationActivity extends AppCompatActivity
             }
         });
         final TextView MoneyEarned = (TextView)findViewById(R.id.moneyEarned);
-
-
         myRef.child(auth.getCurrentUser().getUid()).child("ItemsSold").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final double[] totalmoneyraised = {0};
-                //Toast.makeText(NavigationActivity.this, String.valueOf(dataSnapshot.getChildrenCount()), Toast.LENGTH_SHORT).show();
                 ArrayList<Item> ObjectList = new ArrayList<Item>();
                 if (dataSnapshot.getChildrenCount() == 0){
                     MoneyEarned.setText("$" + String.valueOf(totalmoneyraised[0]));
@@ -262,13 +243,28 @@ public class NavigationActivity extends AppCompatActivity
                         Item tempItem = dsp.getValue(Item.class);
                         ObjectList.add(tempItem);
                         String tempitemprice = tempItem.getPrice().replace("$", "");
-                        //Toast.makeText(NavigationActivity.this, tempitemprice, Toast.LENGTH_SHORT).show();
                         totalmoneyraised[0] = totalmoneyraised[0] + Double.parseDouble(tempitemprice);
-
                     }
                 }
-                MoneyEarned.setText("$" + Double.valueOf(totalmoneyraised[0]));
-                myRef.removeEventListener(this);
+                myRef.child(auth.getCurrentUser().getUid()).child("Donations").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getChildrenCount() == 0){
+                            MoneyEarned.setText("$" + String.valueOf(totalmoneyraised[0]));
+                            return;
+                        }
+                        for(DataSnapshot dsp : dataSnapshot.getChildren()){
+                            String tempprice = dsp.getValue(String.class); String tempitemprice = tempprice.replace("$", "");
+                            Double tempdouble = Double.parseDouble(tempitemprice);
+                            totalmoneyraised[0] = totalmoneyraised[0] + tempdouble;
+                        }
+                        MoneyEarned.setText("$" + Double.valueOf(totalmoneyraised[0]));
+                        myRef.removeEventListener(this);
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
             }
 
             @Override
@@ -276,7 +272,6 @@ public class NavigationActivity extends AppCompatActivity
 
             }
         });
-
         final TextView progressgoal = (TextView) findViewById(R.id.progressgoal);
         myRef.child(auth.getCurrentUser().getUid()).child("MoneyGoal").addValueEventListener(new ValueEventListener() {
             @Override
@@ -287,48 +282,60 @@ public class NavigationActivity extends AppCompatActivity
                 myRef.child(auth.getCurrentUser().getUid()).child("ItemsSold").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        //Toast.makeText(NavigationActivity.this, String.valueOf(dataSnapshot.getChildrenCount()), Toast.LENGTH_SHORT).show();
                         ArrayList<Item> ObjectList = new ArrayList<Item>();
                         if (dataSnapshot.getChildrenCount() == 0){
-
+                            progressgoal.setText("Progress Towards Goal:       No Items Sold!");
                         }
                         else {
-                            for(DataSnapshot dsp : dataSnapshot.getChildren()){
+                            for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                                 Item tempItem = dsp.getValue(Item.class);
                                 ObjectList.add(tempItem);
                                 String tempitemprice = tempItem.getPrice().replace("$", "");
-                                //Toast.makeText(NavigationActivity.this, tempitemprice, Toast.LENGTH_SHORT).show();
                                 totalmoneyraised[0] = totalmoneyraised[0] + Double.parseDouble(tempitemprice);
-
                             }
                         }
-                        myRef.removeEventListener(this);
-                        Double moneyGoal = Double.parseDouble(money);
-                        String moneyraised = String.valueOf(totalmoneyraised[0]);
-                        progressgoal.setText("Progress Towards Goal:       $" + moneyraised + "/" + money);
-                        double intermediate = 100.0* totalmoneyraised[0];
-                        double guy =  intermediate/(moneyGoal+1.0);
-                        pb.setProgress((int) guy);
-                    }
+                            myRef.child(auth.getCurrentUser().getUid()).child("Donations").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.getChildrenCount() == 0){
+                                        return;
+                                    }
+                                    for(DataSnapshot dsp : dataSnapshot.getChildren()){
+                                        String tempprice = dsp.getValue(String.class); String tempitemprice = tempprice.replace("$", "");
+                                        Double tempdouble = Double.parseDouble(tempitemprice);
+                                        totalmoneyraised[0] = totalmoneyraised[0] + tempdouble;
+                                    }
+                                    myRef.removeEventListener(this);
+                                    Double moneyGoal = Double.parseDouble(money);
+                                    String moneyraised = String.valueOf(totalmoneyraised[0]);
+                                    progressgoal.setText("Progress Towards Goal:       $" + moneyraised + "/" + money);
+                                    double intermediate = 100.0* totalmoneyraised[0];
+                                    double guy =  intermediate/(moneyGoal);
+                                    pb.setProgress((int) guy);
+                                    myRef.removeEventListener(this);
+                                }
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                }
+                            });
+                        }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 });
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
         final Button SetGoal = (Button)findViewById(R.id.setGoal);
-        final EditText input2 = new EditText(NavigationActivity.this);
-        input2.setHint("Enter Goal");
         SetGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final EditText input2 = new EditText(NavigationActivity.this);
+                input2.setHint("Enter Goal");
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(NavigationActivity.this);
                 builder1.setTitle("Set Goal");
                 input2.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -341,7 +348,7 @@ public class NavigationActivity extends AppCompatActivity
                         Toast.makeText(NavigationActivity.this, "Goal Set!", Toast.LENGTH_SHORT).show();
                         Intent refresh = new Intent(NavigationActivity.this, NavigationActivity.class);
                         startActivity(refresh);
-                        dialog.dismiss();
+                        dialog.dismiss(); dialog.cancel();
                     }
                 });
                 builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -349,8 +356,13 @@ public class NavigationActivity extends AppCompatActivity
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                         dialog.dismiss();
-                        Intent refresh = new Intent(NavigationActivity.this, NavigationActivity.class);
-                        startActivity(refresh);
+                    }
+                });
+                builder1.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        dialog.dismiss();
+                        dialog.cancel();
                     }
                 });
                 builder1.show();
@@ -359,41 +371,17 @@ public class NavigationActivity extends AppCompatActivity
         });
 
 
-
-
-        TextView Username = (TextView)headerView.findViewById(R.id.username1);
-        TextView useremail = (TextView)headerView.findViewById(R.id.User_email);
-        //Button add_item = (Button)findViewById(R.id.add_item);
-       // Button view_item = (Button)findViewById(R.id.view_items);
-       // Button view_account = (Button)findViewById(R.id.your_account);
-       // WelcomeText.setTypeface(custom);
-       //Username.setTypeface(custom);
-       // useremail.setTypeface(custom);
-       // add_item.setTypeface(custom);
-
-      //  view_item.setTypeface(custom);
-
-        //view_account.setTypeface(custom);
-
-            //Toast.makeText(NavigationActivity.this, "Welcome " + auth.getCurrentUser().getDisplayName() + "!" , Toast.LENGTH_LONG).show();
-            //Toast.makeText(this, auth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
-            myRef.child(auth.getCurrentUser().getUid()).child("DispayName").setValue(auth.getCurrentUser().getDisplayName());
-            myRef.child(auth.getCurrentUser().getUid()).child("Email").setValue(auth.getCurrentUser().getEmail());
-              try {
+        myRef.child(auth.getCurrentUser().getUid()).child("DispayName").setValue(auth.getCurrentUser().getDisplayName());
+        myRef.child(auth.getCurrentUser().getUid()).child("Email").setValue(auth.getCurrentUser().getEmail());
+        try {
                   String displayName = auth.getCurrentUser().getDisplayName().substring(0, auth.getCurrentUser().getDisplayName().indexOf(" "));
                   WelcomeText.setText("Welcome, " + displayName + "!");
-                //WelcomeText.setText(auth.getCurrentUser().getDisplayName());
-                WelcomeText.setTypeface(null, Typeface.BOLD);
-                //Welcome.setTypeface(null, Typeface.BOLD);
-            }catch (Exception e){
+                    WelcomeText.setTypeface(null, Typeface.BOLD);
+        }catch (Exception e){
                 WelcomeText.setText(auth.getCurrentUser().getDisplayName());
                 WelcomeText.setTypeface(null, Typeface.BOLD);
-            }
-             Username.setText(auth.getCurrentUser().getDisplayName());
-             useremail.setText(auth.getCurrentUser().getEmail());
-
+        }
     }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -460,7 +448,6 @@ public class NavigationActivity extends AppCompatActivity
         return true;
     }
     protected void sendEmail() {
-        Log.i("Send email", "");
         String[] TO = {"dyspfbla@gmail.com"};
         String[] CC = {"sharmanikhil99@gmail.com"};
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
@@ -475,7 +462,6 @@ public class NavigationActivity extends AppCompatActivity
             startActivity(Intent.createChooser(emailIntent, "Send mail..."));
             finish();
             Toast.makeText(this, "Email sent!", Toast.LENGTH_SHORT).show();
-            //Log.i("Finished send email...", "");
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(NavigationActivity.this,
                     "There is no email client installed.", Toast.LENGTH_SHORT).show();

@@ -37,9 +37,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class CustomListAdapter extends BaseAdapter {
 
-    //private final Activity context;
-    Context mContext;
-    LayoutInflater inflater;
+    Context mContext; LayoutInflater inflater;
     private List<ModifiedDisplayItems> modifiedDisplayItemsList = null;
     private ArrayList<ModifiedDisplayItems> arraylist;
     Activity activity;
@@ -49,18 +47,14 @@ public class CustomListAdapter extends BaseAdapter {
     final DatabaseReference itemRef = database.getReference("MasterItems");
     final FirebaseAuth auth = FirebaseAuth.getInstance();
 
-
     public CustomListAdapter(Context context, List<ModifiedDisplayItems> modifiedDisplayItemses, Activity act) {
-       // super(context, R.layout.listwithpic, ItemNames);
         // TODO Auto-generated constructor stub
-       // this.context=context;
         mContext = context;
         this.modifiedDisplayItemsList =modifiedDisplayItemses;
         inflater = LayoutInflater.from(mContext);
         this.arraylist = new ArrayList<ModifiedDisplayItems>();
         this.arraylist.addAll(modifiedDisplayItemsList);
         activity = act;
-
     }
     @Override
     public int getCount() {
@@ -89,7 +83,6 @@ public class CustomListAdapter extends BaseAdapter {
         if (owner.equals(auth.getCurrentUser().getUid())){
             edititem.setImageResource(R.drawable.moresettings);
             edititem.setEnabled(true);
-
         }
         final ShareDialog shareDialog;
         shareDialog = new ShareDialog(activity);
@@ -105,13 +98,19 @@ public class CustomListAdapter extends BaseAdapter {
                 builderSingle.setTitle("More Options");
                 ArrayList<String> Settings = new ArrayList<String>();
                 Settings.add("Delete Item"); Settings.add("Modify Item"); Settings.add("Share Item");
-                final ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_list_item_1, Settings);
+                final ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, Settings);
                 builderSingle.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss(); dialog.cancel();
+                        builderSingle.setView(null);
+                    }
+                });
+                builderSingle.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
                         dialog.dismiss();
-                        Intent refreshPage = new Intent(mContext, List_Item.class);
-                        mContext.startActivity(refreshPage);
+                        dialog.cancel();
                     }
                 });
                 builderSingle.setAdapter(adapter, new DialogInterface.OnClickListener() {
@@ -124,13 +123,14 @@ public class CustomListAdapter extends BaseAdapter {
                             commentRef.child(modifiedDisplayItemsList.get(position).getTitle()).removeValue();
                             Intent refreshPage = new Intent(mContext, NavigationActivity.class);
                             Toast.makeText(mContext, "Item Removed!", Toast.LENGTH_SHORT).show();
+                            refreshPage.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             mContext.startActivity(refreshPage);
                         }
                         else if(strName.equals("Modify Item")){
                             Intent modifyItem = new Intent(mContext, Add_Object.class);
-                            //Toast.makeText(AccountInformation.this, ObjectList.get(which-1).getTitle().toString(), Toast.LENGTH_SHORT).show();
-                            //Toast.makeText(AccountInformation.this, "Item Removed!", Toast.LENGTH_SHORT).show();
+                            modifyItem.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             modifyItem.putExtra("modifyitem", modifiedDisplayItemsList.get(position).getTitle());
+
                             mContext.startActivity(modifyItem);
                         }
                         else if(strName.equals("Share Item")){
@@ -142,14 +142,17 @@ public class CustomListAdapter extends BaseAdapter {
                                     .build();
 
                             shareDialog.show(linkContent);
-                            //Uri uriUrl = Uri.parse("https://www.facebook.com/");
-                           // Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
-                           // mContext.startActivity(launchBrowser);
                         }
                     }
                 });
+                builderSingle.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        dialog.dismiss();
+                        dialog.cancel();
+                    }
+                });
                 builderSingle.show();
-
             }
         });
         rowView.setOnClickListener(new View.OnClickListener() {
@@ -157,11 +160,11 @@ public class CustomListAdapter extends BaseAdapter {
             public void onClick(View v) {
                 Intent viewItem = new Intent(mContext, ViewItem.class);
                 viewItem.putExtra("itemname", modifiedDisplayItemsList.get(position).getTitle());
+                viewItem.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(viewItem);
             }
         });
         return rowView;
-
     };
     public void filter(String search){
         search = search.toLowerCase(Locale.getDefault());

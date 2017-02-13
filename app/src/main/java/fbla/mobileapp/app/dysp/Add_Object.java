@@ -26,27 +26,19 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-
 public class Add_Object extends AppCompatActivity {
     private static final int RESULT_LOAD_IMAGE = 101;
     private static final int CAMERA_REQUEST = 1888;
     public static final String IMAGE_TYPE = "image/*";
-    TextView select_image, take_image, textView7, textView8;
-    ImageView image_diplay;
-    Button add_item;
-    TextView textView10;
+    TextView textView7, textView8;
+    ImageView image_diplay; Button add_item; TextView textView10;
     RelativeLayout layout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add__object);
         image_diplay = (ImageView)findViewById(R.id.image_display) ;
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference("Users");
         final DatabaseReference itemRef = database.getReference("MasterItems");
-        textView10 = (TextView)findViewById(R.id.textView10);
-        add_item = (Button)findViewById(R.id.add_item);
         if(getIntent().hasExtra("modifyitem")) {
             final String itemname = getIntent().getStringExtra("modifyitem"); //STRING BEING RECEIVED
             itemRef.child(itemname).addValueEventListener(new ValueEventListener() {
@@ -71,21 +63,18 @@ public class Add_Object extends AppCompatActivity {
                         }
                     });
                 }
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
                 }
             });
-            //Toast.makeText(this, imagestring, Toast.LENGTH_SHORT).show();
-
         }
+        setContentView(R.layout.activity_add__object);
+        textView10 = (TextView)findViewById(R.id.textView10);
+        add_item = (Button)findViewById(R.id.add_item);
         FloatingActionButton takeimage = (FloatingActionButton)findViewById(R.id.imagefab);
         FloatingActionButton fromgallery = (FloatingActionButton)findViewById(R.id.galleryfab);
-        RelativeLayout layout = (RelativeLayout)findViewById(R.id.activity_add__object);
         textView7 = (TextView)findViewById(R.id.textView7);
         textView8 = (TextView)findViewById(R.id.textView8);
-
         image_diplay = (ImageView)findViewById(R.id.image_display) ;
         fromgallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,20 +99,13 @@ public class Add_Object extends AppCompatActivity {
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
             }
         });
-       // Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/lettergothic.ttf");
-
-
-
-
     }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         image_diplay = (ImageView)findViewById(R.id.image_display) ;
        final Bitmap user; final Bitmap user1;
         if (resultCode == RESULT_OK) {
             if (requestCode == RESULT_LOAD_IMAGE) {
-
                 final Uri selectedImageUri = data.getData();
                 try {
                     user1 = new UserPicture(selectedImageUri, getContentResolver()).getBitmap();
@@ -140,16 +122,12 @@ public class Add_Object extends AppCompatActivity {
                     });
 
                 } catch (IOException e) {
-                    //Log.e(Add_Object.class.getSimpleName(), "Failed to load image", e);
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                // original code
-//                String selectedImagePath = getPath(selectedImageUri);
-//                selectedImagePreview.setImageURI(selectedImageUri);
             }
             if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
                 user = (Bitmap) data.getExtras().get("data");
                 image_diplay.setImageBitmap(user);
-                //final Uri selectedImageUri = data.getData();
                 add_item.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -164,8 +142,6 @@ public class Add_Object extends AppCompatActivity {
         } else {
             // report failure
             Toast.makeText(getApplicationContext(), R.string.msg_failed_to_get_intent_data, Toast.LENGTH_LONG).show();
-           //Log.d(Add_Object.class.getSimpleName(), "Failed to get intent data, result code is " + resultCode);
         }
     }
-
 }

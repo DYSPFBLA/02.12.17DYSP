@@ -17,14 +17,6 @@ import java.io.InputStream;
 import java.io.InvalidObjectException;
 
 /**
- * Creates resized images without exploding memory. Uses the method described in android
- * documentation concerning bitmap allocation, which is to subsample the image to a smaller size,
- * close to some expected size. This is required because the android standard library is unable to
- * create a reduced size image from an image file using memory comparable to the final size (and
- * loading a full sized multi-megapixel picture for processing may exceed application memory budget).
- *
- * implementation by user @hdante
- * http://stackoverflow.com/users/1797000/hdante
  */
 
 public class UserPicture {
@@ -37,7 +29,6 @@ public class UserPicture {
     Matrix orientation;
     int storedHeight;
     int storedWidth;
-
     public UserPicture(Uri uri, ContentResolver resolver) {
         this.uri = uri;
         this.resolver = resolver;
@@ -53,7 +44,7 @@ public class UserPicture {
         return false;
     }
 
-    /* Support for gallery apps and remote ("picasa") images */
+
     private boolean getInformationFromMediaDatabase() {
         String[] fields = {MediaStore.Images.Media.DATA, MediaStore.Images.ImageColumns.ORIENTATION};
         Cursor cursor = resolver.query(uri, fields, null, null, null);
@@ -70,8 +61,6 @@ public class UserPicture {
 
         return true;
     }
-
-    /* Support for file managers and dropbox */
     private boolean getInformationFromFileSystem() throws IOException {
         path = uri.getPath();
 
@@ -120,11 +109,6 @@ public class UserPicture {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(resolver.openInputStream(uri), null, options);
-
-        /* The input stream could be reset instead of closed and reopened if it were possible
-           to reliably wrap the input stream on a buffered stream, but it's not possible because
-           decodeStream() places an upper read limit of 1024 bytes for a reset to be made (it calls
-           mark(1024) on the stream). */
         input.close();
 
         if (options.outHeight <= 0 || options.outWidth <= 0)

@@ -22,6 +22,6 @@ public class ThankYouTo extends AppCompatActivity {
             }
         });
         TextView textView = (TextView)findViewById(R.id.textView6);
-        textView.setText("This application with support from Android Studio Documents, Gary111's MaskedEditText (On Github) and numerous, numerous helpful debugging forums on Stackoverflow.");
+        textView.setText("This application with support from Android Studio Documents, Gary111's MaskedEditText and hdodenhof CircleImageView (On Github) and numerous, numerous helpful debugging forums on Stackoverflow.");
     }
 }

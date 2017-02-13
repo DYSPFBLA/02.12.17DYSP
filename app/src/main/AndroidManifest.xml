@@ -72,7 +72,8 @@
             android:authorities="com.facebook.app.FacebookContentProviderfbla.mobileapp.app.dysp"
             android:exported="true" />
 
-        <activity android:name=".UserAccountActivity"></activity>
+        <activity android:name=".UserAccountActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

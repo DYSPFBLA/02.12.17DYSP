@@ -35,7 +35,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class AccountInformation extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +47,6 @@ public class AccountInformation extends AppCompatActivity {
         final ShareDialog shareDialog = new ShareDialog(this);
         final DatabaseReference commentRef = database.getReference("Comments");
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-       // Typeface custom = Typeface.createFromAsset(getAssets(), "fonts/lettergothic.ttf");
         final TextView AboutYou = (TextView)findViewById(R.id.about_you);  AboutYou.setTextSize(25);
         TextView displayName = (TextView)findViewById(R.id.displayName);  displayName.setText("Name: "+ auth.getCurrentUser().getDisplayName());
         TextView displayEmail = (TextView)findViewById(R.id.displayEmail);  displayEmail.setText("Email: " +auth.getCurrentUser().getEmail()); displayEmail.setTextSize(16);
@@ -61,20 +59,17 @@ public class AccountInformation extends AppCompatActivity {
                 displayObject.setText("Objects Posted: " + String.valueOf(num_items));
                 myRef.removeEventListener(this);
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
         Button changeEmail = (Button)findViewById(R.id.changeEmail);
-
-        final EditText input = new EditText(AccountInformation.this);
-        input.setHint("Enter email");
         changeEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(AccountInformation.this);
+                final EditText input = new EditText(AccountInformation.this);
+                input.setHint("Enter email");
                 builder1.setTitle("Change Email");
                 input.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                 builder1.setView(input);
@@ -85,9 +80,9 @@ public class AccountInformation extends AppCompatActivity {
                         user.updateEmail(emailaddress).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                dialog.dismiss();
-                                Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
                                 Toast.makeText(AccountInformation.this, "Email Updated!", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();dialog.cancel();
+                                Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
                                 startActivity(refreshPage);
                             }
                         });
@@ -96,22 +91,26 @@ public class AccountInformation extends AppCompatActivity {
                 builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
+                        dialog.cancel();dialog.dismiss();
+                    }
+                });
+                builder1.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
                         dialog.dismiss();
-                        Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
-                        startActivity(refreshPage);
+                        dialog.cancel();
                     }
                 });
                 builder1.show();
             }
         });
         Button changeName = (Button)findViewById(R.id.changeName);
-        final EditText input2 = new EditText(AccountInformation.this);
-        input2.setHint("Enter Full Name");
         changeName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(AccountInformation.this);
+                final AlertDialog.Builder builder1 = new AlertDialog.Builder(AccountInformation.this);
+                final EditText input2 = new EditText(AccountInformation.this);
+                input2.setHint("Enter Full Name");
                 builder1.setTitle("Change Name");
                 builder1.setView(input2);
                 builder1.setPositiveButton("Change Name", new DialogInterface.OnClickListener() {
@@ -126,8 +125,9 @@ public class AccountInformation extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-                                            Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
+                                            dialog.dismiss();dialog.cancel();
                                             Toast.makeText(AccountInformation.this, "Name Updated!", Toast.LENGTH_SHORT).show();
+                                            Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
                                             startActivity(refreshPage);
                                         }
                                     }
@@ -137,14 +137,18 @@ public class AccountInformation extends AppCompatActivity {
                 builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
                         dialog.dismiss();
-                        Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
-                        startActivity(refreshPage);
+                        dialog.cancel();
+                    }
+                });
+                builder1.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        dialog.dismiss();
+                        dialog.cancel();
                     }
                 });
                 builder1.show();
-
             }
         });
         Button deleteItems = (Button)findViewById(R.id.deleteItems);
@@ -166,7 +170,6 @@ public class AccountInformation extends AppCompatActivity {
                             }
                             for (Item item : ObjectList) {
                                 String title = item.getTitle().toString();
-                                //Toast.makeText(List_Item.this, title, Toast.LENGTH_SHORT).show();
                                 ObjectTitles.add(title);
                             }
                             myRef.removeEventListener(this);
@@ -179,9 +182,14 @@ public class AccountInformation extends AppCompatActivity {
                             builderSingle.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss(); dialog.cancel();
+                                }
+                            });
+                            builderSingle.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
                                     dialog.dismiss();
-                                    Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
-                                    startActivity(refreshPage);
+                                    dialog.cancel();
                                 }
                             });
                             builderSingle.setAdapter(adapter, new DialogInterface.OnClickListener() {
@@ -190,25 +198,22 @@ public class AccountInformation extends AppCompatActivity {
                                     String strName = adapter.getItem(which);
                                     if(strName.equals("Select an Item to Delete:")){
                                         Toast.makeText(AccountInformation.this, "That Is Not An Item", Toast.LENGTH_SHORT).show();
-                                        Intent home12 = new Intent(AccountInformation.this, AccountInformation.class);
-                                        startActivity(home12);
+                                        dialog.cancel();dialog.dismiss();
                                     }
                                     else {
                                         myRef.child(auth.getCurrentUser().getUid()).child("ItemsSent").child(strName).removeValue();
                                         itemRef.child(strName).removeValue();
                                         commentRef.child(strName).removeValue();
-                                        Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
                                         Toast.makeText(AccountInformation.this, "Item Removed!", Toast.LENGTH_SHORT).show();
+                                        Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
                                         startActivity(refreshPage);
                                     }
                                 }
                             });
                             builderSingle.show();
                         }
-
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-
                         }
                     });
                 }
@@ -216,7 +221,6 @@ public class AccountInformation extends AppCompatActivity {
         }catch (Exception e){
             Toast.makeText(this, e.getStackTrace().toString(), Toast.LENGTH_LONG).show();
         }
-
         Button viewOffers = (Button)findViewById(R.id.ViewOffers);
         viewOffers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -242,8 +246,14 @@ public class AccountInformation extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
-                                startActivity(refreshPage);
+                                dialog.cancel();
+                            }
+                        });
+                        builderSingle.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                dialog.dismiss();
+                                dialog.cancel();
                             }
                         });
                         builderSingle.setAdapter(adapter, new DialogInterface.OnClickListener() {
@@ -252,8 +262,7 @@ public class AccountInformation extends AppCompatActivity {
                                 String strName = adapter.getItem(which);
                                 if(strName.equals("Select Item Offer:")){
                                     Toast.makeText(AccountInformation.this, "That Is Not An Offer", Toast.LENGTH_SHORT).show();
-                                    Intent home12 = new Intent(AccountInformation.this, AccountInformation.class);
-                                    startActivity(home12);
+                                    dialog.cancel();dialog.dismiss();
                                 }
                                 else{
                                     String full = adapter2.getItem(which-1);
@@ -276,25 +285,26 @@ public class AccountInformation extends AppCompatActivity {
                                                     myRef.child(user).child("ItemsBought").child(item_name).setValue(item_name);
                                                     myRef.child(auth.getCurrentUser().getUid()).child("ItemOffers").child(item_name).removeValue();
                                                     Toast.makeText(AccountInformation.this, "Item sold!", Toast.LENGTH_SHORT).show();
-                                                    Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
-                                                    startActivity(refreshPage);
-                                                    dialog.dismiss();
+                                                    dialog.dismiss(); dialog.cancel();
                                                 }
                                             }).setNegativeButton("Reject Offer", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     myRef.child(auth.getCurrentUser().getUid()).child("ItemOffers").child(item_name).removeValue();
-                                                    Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
                                                     Toast.makeText(AccountInformation.this, "Offer Rejected!", Toast.LENGTH_SHORT).show();
-                                                    startActivity(refreshPage);
-                                                    dialog.dismiss();
+                                                    dialog.dismiss();dialog.cancel();
                                                 }
                                             }).setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
-                                                    Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
-                                                    startActivity(refreshPage);
+                                                    dialog.dismiss(); dialog.cancel();
+                                                }
+                                            });
+                                            builderInner.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                                @Override
+                                                public void onCancel(DialogInterface dialog) {
                                                     dialog.dismiss();
+                                                    dialog.cancel();
                                                 }
                                             });
                                             builderInner.show();
@@ -304,6 +314,13 @@ public class AccountInformation extends AppCompatActivity {
                                         }
                                     });
                                 }
+                            }
+                        });
+                        builderSingle.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                dialog.dismiss();
+                                dialog.cancel();
                             }
                         });
                         builderSingle.show();
@@ -317,8 +334,6 @@ public class AccountInformation extends AppCompatActivity {
         if(getIntent().hasExtra("seeoffers")) {
             viewOffers.performClick();
         }
-
-
         Button ModifyItems = (Button)findViewById(R.id.ModifyItems);
         try {
             ModifyItems.setOnClickListener(new View.OnClickListener() {
@@ -338,7 +353,6 @@ public class AccountInformation extends AppCompatActivity {
                             }
                             for (Item item : ObjectList) {
                                 String title = item.getTitle().toString();
-                                //Toast.makeText(List_Item.this, title, Toast.LENGTH_SHORT).show();
                                 ObjectTitles.add(title);
                             }
                             myRef.removeEventListener(this);
@@ -351,9 +365,7 @@ public class AccountInformation extends AppCompatActivity {
                             builderSingle.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
-                                    startActivity(refreshPage);
+                                    dialog.dismiss(); dialog.cancel();
                                 }
                             });
                             builderSingle.setAdapter(adapter, new DialogInterface.OnClickListener() {
@@ -362,28 +374,26 @@ public class AccountInformation extends AppCompatActivity {
                                     String strName = adapter.getItem(which);
                                     if(strName.equals("Select an Item to Modify:")){
                                         Toast.makeText(AccountInformation.this, "That Is Not An Item", Toast.LENGTH_SHORT).show();
-                                        Intent home12 = new Intent(AccountInformation.this, AccountInformation.class);
-                                        startActivity(home12);
+                                        dialog.cancel();dialog.dismiss();
                                     }
                                     else {
-                                       // myRef.child(auth.getCurrentUser().getUid()).child("ItemsSent").child(strName).removeValue();
-                                        //itemRef.child(strName).removeValue();
-                                        //commentRef.child(strName).removeValue();
-
                                         Intent modifyItem = new Intent(AccountInformation.this, Add_Object.class);
-                                        //Toast.makeText(AccountInformation.this, ObjectList.get(which-1).getTitle().toString(), Toast.LENGTH_SHORT).show();
-                                        //Toast.makeText(AccountInformation.this, "Item Removed!", Toast.LENGTH_SHORT).show();
                                         modifyItem.putExtra("modifyitem", ObjectList.get(which-1).getTitle().toString());
                                         startActivity(modifyItem);
                                     }
                                 }
                             });
+                            builderSingle.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    dialog.dismiss();
+                                    dialog.cancel();
+                                }
+                            });
                             builderSingle.show();
                         }
-
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-
                         }
                     });
                 }
@@ -391,7 +401,6 @@ public class AccountInformation extends AppCompatActivity {
         }catch (Exception e){
             Toast.makeText(this, e.getStackTrace().toString(), Toast.LENGTH_LONG).show();
         }
-
         Button InputCreditCard = (Button)findViewById(R.id.InputCreditCard);
         InputCreditCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -409,7 +418,6 @@ public class AccountInformation extends AppCompatActivity {
                 startActivity(launchBrowser);
             }
         });
-
         Button ConnectToFacebook = (Button)findViewById(R.id.ConnectToFacebook);
         ConnectToFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -420,7 +428,6 @@ public class AccountInformation extends AppCompatActivity {
                                 "I just joined DYSP FBLA! This app is inteded for FBLA users to raise funds to attend state and national FBLA Conferences! You can join me too by following this link!")
                         .setContentUrl(Uri.parse("https://play.google.com/store/apps/details?id=fbla.mobileapp.app.dysp"))
                         .build();
-
                 shareDialog.show(linkContent);
             }
         });
