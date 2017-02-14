@@ -64,7 +64,7 @@ public class UserAccountActivity extends AppCompatActivity {
     final DatabaseReference myRef = database.getReference("Users");
     final FirebaseAuth auth = FirebaseAuth.getInstance();
     private String USERDISPLAY = auth.getCurrentUser().getUid();
-    EditText donation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,6 @@ public class UserAccountActivity extends AppCompatActivity {
         mImageView = (ImageView) findViewById(R.id.profile_image);
         final DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         final Date today = Calendar.getInstance().getTime();
-        donation = new EditText(UserAccountActivity.this);
         final Boolean[] member_year_set = {false};
         if (getIntent().hasExtra("username")) {
             USERDISPLAY = getIntent().getStringExtra("username");
@@ -176,7 +175,7 @@ public class UserAccountActivity extends AppCompatActivity {
                                 totalmoneyraised[0] = totalmoneyraised[0] + Double.parseDouble(tempitemprice);
                             }
                         }
-                        myRef.child(auth.getCurrentUser().getUid()).child("Donations").addListenerForSingleValueEvent(new ValueEventListener() {
+                        myRef.child(USERDISPLAY).child("Donations").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.getChildrenCount() == 0){
@@ -329,8 +328,8 @@ public class UserAccountActivity extends AppCompatActivity {
                         myRef.child(USERDISPLAY).child("MemberSince").setValue(membersince);
                         dialog.dismiss();dialog.cancel();
                         Toast.makeText(UserAccountActivity.this, "Year Set!", Toast.LENGTH_SHORT).show();
-                        Intent refresh = new Intent(UserAccountActivity.this, NavigationActivity.class);
-                        startActivity(refresh);
+                        finish();
+                        startActivity(getIntent().putExtra("username", USERDISPLAY));
                     }
                 });
                 builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -363,7 +362,6 @@ public class UserAccountActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String email = dataSnapshot.getValue(String.class);
                         sendEmail(email);
-                        Toast.makeText(UserAccountActivity.this, "Email sent!", Toast.LENGTH_SHORT).show();
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -374,9 +372,37 @@ public class UserAccountActivity extends AppCompatActivity {
         DonateTo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final EditText donation = new EditText(UserAccountActivity.this);
                 donation.setHint("$");
                 donation.setInputType(InputType.TYPE_CLASS_NUMBER);
-                donation.addTextChangedListener(tw);
+                donation.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if (!s.toString().matches("^\\$(\\d{1,3}(\\,\\d{3})*|(\\d+))(\\.\\d{2})?$")) {
+                            String userInput = "" + s.toString().replaceAll("[^\\d]", "");
+                            StringBuilder cashAmountBuilder = new StringBuilder(userInput);
+
+                            while (cashAmountBuilder.length() > 3 && cashAmountBuilder.charAt(0) == '0') {
+                                cashAmountBuilder.deleteCharAt(0);
+                            }
+                            while (cashAmountBuilder.length() < 3) {
+                                cashAmountBuilder.insert(0, '0');
+                            }
+                            cashAmountBuilder.insert(cashAmountBuilder.length() - 2, '.');
+                            donation.removeTextChangedListener(this);
+                            donation.setText(cashAmountBuilder.toString());
+                            donation.setTextKeepState("$" + cashAmountBuilder.toString());
+                            Selection.setSelection(donation.getText(), cashAmountBuilder.toString().length() + 1);
+                            donation.addTextChangedListener(this);
+                        }
+                    }
+                });
                 if(USERDISPLAY.equals(auth.getCurrentUser().getUid())){
                     Toast.makeText(UserAccountActivity.this, "Trying to donate to yourself?", Toast.LENGTH_SHORT).show();
                     return;
@@ -391,8 +417,8 @@ public class UserAccountActivity extends AppCompatActivity {
                         String date = df.format(today).replace("/", "").replace(" ", "").replace(":", "");
                         myRef.child(USERDISPLAY).child("Donations").child(date).setValue(donationtext);
                         Toast.makeText(UserAccountActivity.this, "Donation Given!", Toast.LENGTH_SHORT).show();
-                        Intent refresh = new Intent(UserAccountActivity.this, NavigationActivity.class);
-                        startActivity(refresh);
+                        finish();
+                        startActivity(getIntent().putExtra("username", USERDISPLAY));
                     }
                 });
                 builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -400,9 +426,6 @@ public class UserAccountActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                         dialog.dismiss();
-                        Intent refresh = new Intent(UserAccountActivity.this, UserAccountActivity.class);
-                        refresh.putExtra("username", USERDISPLAY);
-                        startActivity(refresh);
                     }
                 });
                 builder1.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -410,9 +433,6 @@ public class UserAccountActivity extends AppCompatActivity {
                     public void onCancel(DialogInterface dialog) {
                         dialog.dismiss();
                         dialog.cancel();
-                        Intent refresh = new Intent(UserAccountActivity.this, UserAccountActivity.class);
-                        refresh.putExtra("username", USERDISPLAY);
-                        startActivity(refresh);
                     }
                 });
                 builder1.show();
@@ -438,8 +458,8 @@ public class UserAccountActivity extends AppCompatActivity {
                         }
                         myRef.child(USERDISPLAY).child("FundraisingFor").setValue(reason);
                         Toast.makeText(UserAccountActivity.this, "Reason Updated!", Toast.LENGTH_SHORT).show();
-                        Intent refresh = new Intent(UserAccountActivity.this, UserAccountActivity.class);
-                        startActivity(refresh);
+                        finish();
+                        startActivity(getIntent());
                     }
                 });
                 builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -480,34 +500,6 @@ public class UserAccountActivity extends AppCompatActivity {
 
         }
     }
-    TextWatcher tw = new TextWatcher() {
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-        @Override
-        public void afterTextChanged(Editable s) {
-            if (!s.toString().matches("^\\$(\\d{1,3}(\\,\\d{3})*|(\\d+))(\\.\\d{2})?$")) {
-                String userInput = "" + s.toString().replaceAll("[^\\d]", "");
-                StringBuilder cashAmountBuilder = new StringBuilder(userInput);
-
-                while (cashAmountBuilder.length() > 3 && cashAmountBuilder.charAt(0) == '0') {
-                    cashAmountBuilder.deleteCharAt(0);
-                }
-                while (cashAmountBuilder.length() < 3) {
-                    cashAmountBuilder.insert(0, '0');
-                }
-                cashAmountBuilder.insert(cashAmountBuilder.length() - 2, '.');
-                donation.removeTextChangedListener(this);
-                donation.setText(cashAmountBuilder.toString());
-                donation.setTextKeepState("$" + cashAmountBuilder.toString());
-                Selection.setSelection(donation.getText(), cashAmountBuilder.toString().length() + 1);
-                donation.addTextChangedListener(this);
-            }
-        }
-    };
     protected void sendEmail(String email) {
         String[] TO = {email};
         Intent emailIntent = new Intent(Intent.ACTION_SEND);

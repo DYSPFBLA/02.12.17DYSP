@@ -96,12 +96,6 @@
                 android:layout_height="25dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:layout_weight="0.98" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/yellowmark"
-                android:layout_marginTop="8dp"
-                android:id="@+id/imageView43348" />
 
             <ImageView
                 android:layout_width="wrap_content"

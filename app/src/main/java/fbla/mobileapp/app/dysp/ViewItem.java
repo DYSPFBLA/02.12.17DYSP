@@ -13,6 +13,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.Selection;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.UnderlineSpan;
 import android.util.Base64;
@@ -40,14 +41,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class ViewItem extends AppCompatActivity {
-    public EditText input;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_item);
-        input = new EditText(this);
-        input.setHint("Enter your price here");
         final FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference("Users");
@@ -143,20 +140,59 @@ public class ViewItem extends AppCompatActivity {
                         public void onClick(View v) {
                             myRef.child(auth.getCurrentUser().getUid()).child("Interested In").child(item.getTitle()).setValue(item);
                             Toast.makeText(ViewItem.this, "Item added to Interests!", Toast.LENGTH_SHORT).show();
-                            Intent backto = new Intent(ViewItem.this, NavigationActivity.class);
-                            startActivity(backto);
-                            addtoInterested.setOnClickListener(null);
+                            //Intent backto = new Intent(ViewItem.this, NavigationActivity.class);
+                            //startActivity(backto);
+                            //addtoInterested.setOnClickListener(null);
                         }
                     });
                     buyItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                           final EditText input = new EditText(ViewItem.this);
+                            input.setHint("Enter your price here");
                             input.setInputType(InputType.TYPE_CLASS_NUMBER);
-                            input.addTextChangedListener(tw);
+                            input.addTextChangedListener(new TextWatcher() {
+                                @Override
+                                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                }
+
+                                @Override
+                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                                }
+
+                                @Override
+                                public void afterTextChanged(Editable s) {
+
+                                    if (!s.toString().matches("^\\$(\\d{1,3}(\\,\\d{3})*|(\\d+))(\\.\\d{2})?$")) {
+                                        String userInput = "" + s.toString().replaceAll("[^\\d]", "");
+                                        StringBuilder cashAmountBuilder = new StringBuilder(userInput);
+
+                                        while (cashAmountBuilder.length() > 3 && cashAmountBuilder.charAt(0) == '0') {
+                                            cashAmountBuilder.deleteCharAt(0);
+                                        }
+                                        while (cashAmountBuilder.length() < 3) {
+                                            cashAmountBuilder.insert(0, '0');
+                                        }
+                                        cashAmountBuilder.insert(cashAmountBuilder.length() - 2, '.');
+
+                                        input.removeTextChangedListener(this);
+                                        input.setText(cashAmountBuilder.toString());
+
+                                        input.setTextKeepState("$" + cashAmountBuilder.toString());
+                                        Selection.setSelection(input.getText(), cashAmountBuilder.toString().length() + 1);
+
+                                        input.addTextChangedListener(this);
+                                    }
+                                }
+                            });
                             AlertDialog.Builder builder = new AlertDialog.Builder(ViewItem.this);
                             builder.setTitle("Buy Item").setMessage("The seller has indicated this price: " + "\n" + item.getPrice()).setView(input).setPositiveButton("Post Price", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    if (TextUtils.isEmpty(input.getText())) {
+                                        Toast.makeText(ViewItem.this, "Please Enter A Monetary Value:", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
                                     final int posted_pricenum = Integer.valueOf(item.getPrice().replace("$", "").replace(".", "")); //Price set by seller.
                                     int price_postednum = Integer.valueOf(input.getText().toString().replace("$", "").replace(".", "")); //Price offered by user.
                                     if(price_postednum >= posted_pricenum) {
@@ -183,8 +219,13 @@ public class ViewItem extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.cancel();
                                     dialog.dismiss();
-                                    Intent back = new Intent(ViewItem.this, List_Item.class);
-                                    startActivity(back);
+                                }
+                            });
+                            builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    dialog.dismiss();
+                                    dialog.cancel();
                                 }
                             });
                             builder.show();
@@ -217,7 +258,6 @@ public class ViewItem extends AppCompatActivity {
                         }
                     });
 
-
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -232,39 +272,4 @@ public class ViewItem extends AppCompatActivity {
 
 
     }
-    TextWatcher tw = new TextWatcher() {
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-            if (!s.toString().matches("^\\$(\\d{1,3}(\\,\\d{3})*|(\\d+))(\\.\\d{2})?$")) {
-                String userInput = "" + s.toString().replaceAll("[^\\d]", "");
-                StringBuilder cashAmountBuilder = new StringBuilder(userInput);
-
-                while (cashAmountBuilder.length() > 3 && cashAmountBuilder.charAt(0) == '0') {
-                    cashAmountBuilder.deleteCharAt(0);
-                }
-                while (cashAmountBuilder.length() < 3) {
-                    cashAmountBuilder.insert(0, '0');
-                }
-                cashAmountBuilder.insert(cashAmountBuilder.length() - 2, '.');
-
-                input.removeTextChangedListener(this);
-                input.setText(cashAmountBuilder.toString());
-
-                input.setTextKeepState("$" + cashAmountBuilder.toString());
-                Selection.setSelection(input.getText(), cashAmountBuilder.toString().length() + 1);
-
-                input.addTextChangedListener(this);
-            }
-        }
-    };
 }

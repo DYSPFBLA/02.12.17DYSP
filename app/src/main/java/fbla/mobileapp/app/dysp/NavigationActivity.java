@@ -107,9 +107,9 @@ public class NavigationActivity extends AppCompatActivity
                         myRef.child(auth.getCurrentUser().getUid()).child("Location").setValue(location);
                         dialog.dismiss();
                         builder1.setView(null);
-                        Intent refresh = new Intent(NavigationActivity.this, NavigationActivity.class);
+                        finish();
+                        startActivity(getIntent());
                         Toast.makeText(NavigationActivity.this, "Location Updated!", Toast.LENGTH_SHORT).show();
-                        startActivity(refresh);
                         dialog.cancel();
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -171,8 +171,8 @@ public class NavigationActivity extends AppCompatActivity
                         myRef.removeEventListener(this);
                         if (SaveTitles.isEmpty()) {
                             Toast.makeText(NavigationActivity.this, "No Saved Items!", Toast.LENGTH_SHORT).show();
-                            Intent refreshPage = new Intent(NavigationActivity.this, NavigationView.class);
-                            startActivity(refreshPage);
+                            finish();
+                            startActivity(getIntent());
                         }
                         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(NavigationActivity.this, android.R.layout.simple_list_item_1, SaveTitles);
                         builderSingle.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -346,8 +346,8 @@ public class NavigationActivity extends AppCompatActivity
                         String goal = input2.getText().toString();
                         myRef.child(auth.getCurrentUser().getUid()).child("MoneyGoal").setValue(goal);
                         Toast.makeText(NavigationActivity.this, "Goal Set!", Toast.LENGTH_SHORT).show();
-                        Intent refresh = new Intent(NavigationActivity.this, NavigationActivity.class);
-                        startActivity(refresh);
+                        finish();
+                        startActivity(getIntent());
                         dialog.dismiss(); dialog.cancel();
                     }
                 });
@@ -432,7 +432,7 @@ public class NavigationActivity extends AppCompatActivity
             Intent viewItems = new Intent(NavigationActivity.this, List_Item.class);
             startActivity(viewItems);
         } else if (id == R.id.nav_youraccount) {
-            Intent yourAccount = new Intent(NavigationActivity.this, AccountInformation.class);
+            Intent yourAccount = new Intent(NavigationActivity.this, UserAccountActivity.class);
             startActivity(yourAccount);
         } else if (id == R.id.nav_email) {
             sendEmail();
@@ -460,8 +460,6 @@ public class NavigationActivity extends AppCompatActivity
         emailIntent.putExtra(Intent.EXTRA_TEXT, "Email message goes here");
         try {
             startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-            finish();
-            Toast.makeText(this, "Email sent!", Toast.LENGTH_SHORT).show();
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(NavigationActivity.this,
                     "There is no email client installed.", Toast.LENGTH_SHORT).show();

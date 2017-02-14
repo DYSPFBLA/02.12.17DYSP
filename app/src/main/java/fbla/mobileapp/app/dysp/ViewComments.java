@@ -123,8 +123,9 @@ public class ViewComments extends AppCompatActivity {
                         THAT USERS OF ALL AGES WILL FIND APPROPRIATE
                          AND RELEVANT DISCUSSION IN THE COMMENTS SECTION.
                          PLEASE FORGIVE US FOR THE EXPLICIT WORDS.
+                         WE WILL BE EXPANDING THE WORDS BASE IN THE FUTURE TO ACCOUNT FOR MORE WORDS.
                          */
-                        List<String> words = Arrays.asList("damn", "ass", "fuck", "Fuck", "bitch", "bastard", "cunt", "shit", "crap", "hell", "bitches", "boob", "boobs", "bullshit", "dick", "cock", "nude", "naked");
+                        List<String> words = Arrays.asList("damn", "ass", "fuck", "dammit", "motherfucker", "nigga", "faggot", "fag","cocksucker", "Cock", "nigger", "Fuck", "bitch", "bastard", "cunt", "shit", "crap", "hell", "bitches", "boob", "boobs", "bullshit", "dick", "cock", "nude", "naked");
                         for (String word : words) {
                             Pattern rx = Pattern.compile("\\b" + word + "\\b", Pattern.CASE_INSENSITIVE);
                             comment = rx.matcher(comment).replaceAll(new String(new char[word.length()]).replace('\0', '*'));

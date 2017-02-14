@@ -1,16 +1,21 @@
 package fbla.mobileapp.app.dysp;
 
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -25,13 +30,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Add_Object extends AppCompatActivity {
     private static final int RESULT_LOAD_IMAGE = 101;
     private static final int CAMERA_REQUEST = 1888;
     public static final String IMAGE_TYPE = "image/*";
-    TextView textView7, textView8;
-    ImageView image_diplay; Button add_item; TextView textView10;
+    ImageView image_diplay, repeatPhoto; Button add_item;
     RelativeLayout layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +53,6 @@ public class Add_Object extends AppCompatActivity {
                     itemRef.removeEventListener(this);
                     byte[] decodedString = Base64.decode(item.getPic(), Base64.DEFAULT);
                     final Bitmap bit = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    textView10.setVisibility(View.INVISIBLE);
                     add_item.setText("Modify Item");
                     image_diplay.setImageBitmap(bit);
                     add_item.setOnClickListener(new View.OnClickListener() {
@@ -56,10 +60,16 @@ public class Add_Object extends AppCompatActivity {
                         public void onClick(View v) {
                             Intent confirm_item = new Intent(Add_Object.this, Add_Details.class);
                             ByteArrayOutputStream bs = new ByteArrayOutputStream();
-                            bit.compress(Bitmap.CompressFormat.JPEG, 50, bs);
+                            bit.compress(Bitmap.CompressFormat.JPEG, 99, bs);
                             confirm_item.putExtra("byteArray", bs.toByteArray());
                             confirm_item.putExtra("modifieditem", itemname);
                             startActivity(confirm_item);
+                        }
+                    });
+                    repeatPhoto.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            PromptUser();
                         }
                     });
                 }
@@ -68,35 +78,17 @@ public class Add_Object extends AppCompatActivity {
                 }
             });
         }
+        if(!getIntent().hasExtra("modifyitem")){
+            PromptUser();
+        }
         setContentView(R.layout.activity_add__object);
-        textView10 = (TextView)findViewById(R.id.textView10);
         add_item = (Button)findViewById(R.id.add_item);
-        FloatingActionButton takeimage = (FloatingActionButton)findViewById(R.id.imagefab);
-        FloatingActionButton fromgallery = (FloatingActionButton)findViewById(R.id.galleryfab);
-        textView7 = (TextView)findViewById(R.id.textView7);
-        textView8 = (TextView)findViewById(R.id.textView8);
         image_diplay = (ImageView)findViewById(R.id.image_display) ;
-        fromgallery.setOnClickListener(new View.OnClickListener() {
+        repeatPhoto = (ImageView)findViewById(R.id.repeatPhoto);
+        repeatPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                textView10.setVisibility(View.INVISIBLE);
-                textView7.setVisibility(View.INVISIBLE);
-                textView8.setVisibility(View.INVISIBLE);
-                Intent i = new Intent();
-                i.setType(IMAGE_TYPE);
-                i.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(i,
-                        getString(R.string.select_picture)), RESULT_LOAD_IMAGE);
-            }
-        });
-        takeimage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                textView7.setVisibility(View.INVISIBLE);
-                textView8.setVisibility(View.INVISIBLE);
-                textView10.setVisibility(View.INVISIBLE);
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                PromptUser();
             }
         });
     }
@@ -133,7 +125,7 @@ public class Add_Object extends AppCompatActivity {
                     public void onClick(View v) {
                         Intent confirm_item = new Intent(Add_Object.this, Add_Details.class);
                         ByteArrayOutputStream bs = new ByteArrayOutputStream();
-                        user.compress(Bitmap.CompressFormat.JPEG, 99, bs);
+                        user.compress(Bitmap.CompressFormat.JPEG, 100, bs);
                         confirm_item.putExtra("byteArray", bs.toByteArray());
                         startActivity(confirm_item);
                     }
@@ -141,7 +133,45 @@ public class Add_Object extends AppCompatActivity {
             }
         } else {
             // report failure
-            Toast.makeText(getApplicationContext(), R.string.msg_failed_to_get_intent_data, Toast.LENGTH_LONG).show();
+            finish();
+            //Toast.makeText(getApplicationContext(), R.string.msg_failed_to_get_intent_data, Toast.LENGTH_LONG).show();
         }
     }
+    public void PromptUser(){
+        final AlertDialog.Builder builderSingle = new AlertDialog.Builder(Add_Object.this);
+        builderSingle.setTitle("Choose Image:"); ArrayList<String> ImagePicker = new ArrayList<String>(); ImagePicker.add("Take Picture"); ImagePicker.add("Choose From Gallery");
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(Add_Object.this, android.R.layout.simple_list_item_1, ImagePicker);
+        builderSingle.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        builderSingle.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                dialog.dismiss();
+                dialog.cancel();
+            }
+        });
+        builderSingle.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String strName = adapter.getItem(which);
+                if(strName.equals("Take Picture")){
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                }
+                else if(strName.equals("Choose From Gallery")) {
+                    Intent i = new Intent();
+                    i.setType(IMAGE_TYPE);
+                    i.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(i,
+                            getString(R.string.select_picture)), RESULT_LOAD_IMAGE);
+                }
+            }
+        });
+        builderSingle.show();
+    }
+
 }

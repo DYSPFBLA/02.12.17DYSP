@@ -82,8 +82,8 @@ public class AccountInformation extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 Toast.makeText(AccountInformation.this, "Email Updated!", Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();dialog.cancel();
-                                Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
-                                startActivity(refreshPage);
+                                finish();
+                                startActivity(getIntent());
                             }
                         });
                     }
@@ -127,8 +127,8 @@ public class AccountInformation extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             dialog.dismiss();dialog.cancel();
                                             Toast.makeText(AccountInformation.this, "Name Updated!", Toast.LENGTH_SHORT).show();
-                                            Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
-                                            startActivity(refreshPage);
+                                            finish();
+                                            startActivity(getIntent());
                                         }
                                     }
                                 });
@@ -175,8 +175,8 @@ public class AccountInformation extends AppCompatActivity {
                             myRef.removeEventListener(this);
                             if (ObjectTitles.isEmpty()) {
                                 Toast.makeText(AccountInformation.this, "No Items To Delete!", Toast.LENGTH_SHORT).show();
-                                Intent refreshPage = new Intent(AccountInformation.this, NavigationView.class);
-                                startActivity(refreshPage);
+                                finish();
+                                startActivity(getIntent());
                             }
                             final ArrayAdapter<String> adapter = new ArrayAdapter<String>(AccountInformation.this, android.R.layout.simple_list_item_1, ObjectTitles);
                             builderSingle.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -205,8 +205,8 @@ public class AccountInformation extends AppCompatActivity {
                                         itemRef.child(strName).removeValue();
                                         commentRef.child(strName).removeValue();
                                         Toast.makeText(AccountInformation.this, "Item Removed!", Toast.LENGTH_SHORT).show();
-                                        Intent refreshPage = new Intent(AccountInformation.this, AccountInformation.class);
-                                        startActivity(refreshPage);
+                                        finish();
+                                        startActivity(getIntent());
                                     }
                                 }
                             });
@@ -358,8 +358,8 @@ public class AccountInformation extends AppCompatActivity {
                             myRef.removeEventListener(this);
                             if (ObjectTitles.isEmpty()) {
                                 Toast.makeText(AccountInformation.this, "No Items To Modify!", Toast.LENGTH_SHORT).show();
-                                Intent refreshPage = new Intent(AccountInformation.this, NavigationView.class);
-                                startActivity(refreshPage);
+                                finish();
+                                startActivity(getIntent());
                             }
                             final ArrayAdapter<String> adapter = new ArrayAdapter<String>(AccountInformation.this, android.R.layout.simple_list_item_1, ObjectTitles);
                             builderSingle.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

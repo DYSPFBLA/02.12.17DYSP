@@ -60,11 +60,12 @@ public class SignIn extends AppCompatActivity {
                startActivity(new Intent(SignIn.this, LoginActivity.class));
             }
         });
-        final EditText input = new EditText(SignIn.this);
-        input.setHint("Enter email");
+
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final EditText input = new EditText(SignIn.this);
+                input.setHint("Enter email");
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(SignIn.this);
                 builder1.setTitle("Reset Password");
                 input.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
@@ -77,8 +78,7 @@ public class SignIn extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Toast.makeText(SignIn.this, "Email sent!", Toast.LENGTH_SHORT).show();
-                                Intent refresh = new Intent(SignIn.this, SignIn.class);
-                                startActivity(refresh);
+                                dialog.cancel();
                                 dialog.dismiss();
                             }
                         });
@@ -89,8 +89,6 @@ public class SignIn extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                         dialog.dismiss();
-                        Intent refresh = new Intent(SignIn.this, SignIn.class);
-                        startActivity(refresh);
                     }
                 });
                 builder1.show();
